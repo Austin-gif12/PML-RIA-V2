@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PML RIA">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0E0602">
+<link rel="icon" href="assets/icon-180.png">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<title>PML Fire Protection — Sign In</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  body{background:var(--black);background-image:radial-gradient(900px 500px at 85% -10%,rgba(252,191,42,.18),transparent 60%),radial-gradient(700px 400px at -10% 110%,rgba(252,191,42,.10),transparent 60%);display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px 20px;color:#fff}
+  .login-wrap{width:100%;max-width:410px}
+  .login-logo{display:flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:26px;text-align:center}
+  .login-logo img{width:210px;max-width:60%;height:auto}
+  .login-logo .sub{font-family:var(--ffh);font-weight:700;font-size:12px;letter-spacing:4px;text-transform:uppercase;color:var(--yellow)}
+  .login-logo .scheme{color:#b9afa3;font-size:13px;line-height:1.55}
+  .login-card{background:#fff;color:var(--ink);border-radius:18px;padding:26px 24px 22px;box-shadow:0 20px 60px rgba(0,0,0,.5);border-top:5px solid var(--yellow)}
+  .login-card h1{font-family:var(--ffh);font-size:17px;font-weight:800;margin-bottom:4px}
+  .login-card .lead{color:var(--muted);font-size:13px;margin-bottom:18px}
+  .login-card .field{margin-bottom:14px}
+  .login-btn-row{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+  .link-btn{background:none;border:none;color:var(--muted);font-family:var(--ff);font-size:13px;cursor:pointer;text-align:center;padding:8px}
+  .link-btn:hover{color:var(--ink);text-decoration:underline}
+  .tagline{margin-top:26px;text-align:center;font-family:var(--ffh);font-size:15px;font-weight:300;letter-spacing:.5px;color:var(--yellow)}
+  .tagline b{font-weight:800;color:#fff}
+  .foot-note{text-align:center;font-size:12px;color:#8d8378;margin-top:10px}
+</style>
+</head>
+<body>
+
+<div class="login-wrap">
+  <div class="login-logo">
+    <img src="assets/logo-light.png" alt="PML">
+    <div class="sub">Fire Protection</div>
+    <div class="scheme">Q-Mark Fire Door Installation Scheme<br>Record of Installation Activities</div>
+  </div>
+
+  <div class="login-card">
+    <h1>Welcome back</h1>
+    <p class="lead">Sign in to open your jobs.</p>
+    <div id="msgBox" style="display:none" class="field-error"></div>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="email" autocomplete="username" placeholder="you@pmlfire.co.uk">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="password" autocomplete="current-password" placeholder="••••••••">
+    </div>
+    <div class="login-btn-row">
+      <button class="btn btn-blue" id="signInBtn">Sign In</button>
+      <button class="link-btn" id="forgotBtn">Forgot your password?</button>
+    </div>
+  </div>
+
+  <div class="tagline">Building <b>Confidence.</b></div>
+  <p class="foot-note">Need an account? Ask whoever manages this system to add your email.</p>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { auth } from "./firebase-init.js";
+import {
+  signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+
+const emailEl = document.getElementById('email');
+const passEl = document.getElementById('password');
+const msgBox = document.getElementById('msgBox');
+const signInBtn = document.getElementById('signInBtn');
+const forgotBtn = document.getElementById('forgotBtn');
+
+function showMsg(text, isError=true){
+  msgBox.textContent = text;
+  msgBox.style.display = text ? 'block' : 'none';
+  msgBox.style.color = isError ? 'var(--red)' : 'var(--green)';
+}
+
+function friendlyError(err){
+  const code = err.code || '';
+  if(code.includes('invalid-credential') || code.includes('wrong-password') || code.includes('user-not-found')) return 'Incorrect email or password.';
+  if(code.includes('invalid-email')) return 'Enter a valid email address.';
+  if(code.includes('too-many-requests')) return 'Too many attempts — try again in a few minutes.';
+  if(code.includes('network-request-failed')) return 'No connection — check your signal and try again.';
+  return err.message || 'Something went wrong signing in.';
+}
+
+signInBtn.addEventListener('click', async ()=>{
+  showMsg('');
+  const email = emailEl.value.trim();
+  const password = passEl.value;
+  if(!email || !password){ showMsg('Enter your email and password.'); return; }
+  signInBtn.disabled = true; signInBtn.textContent = 'Signing in…';
+  try{
+    await signInWithEmailAndPassword(auth, email, password);
+    // onAuthStateChanged below handles the redirect
+  }catch(err){
+    showMsg(friendlyError(err));
+    signInBtn.disabled = false; signInBtn.textContent = 'Sign In';
+  }
+});
+
+passEl.addEventListener('keydown', e=>{ if(e.key==='Enter') signInBtn.click(); });
+emailEl.addEventListener('keydown', e=>{ if(e.key==='Enter') passEl.focus(); });
+
+forgotBtn.addEventListener('click', async ()=>{
+  const email = emailEl.value.trim();
+  if(!email){ showMsg('Type your email above first, then tap "Forgot password?" again.'); return; }
+  try{
+    await sendPasswordResetEmail(auth, email);
+    showMsg('Password reset email sent — check your inbox.', false);
+  }catch(err){
+    showMsg(friendlyError(err));
+  }
+});
+
+// Already signed in (including from offline cache) → skip straight to the job list.
+onAuthStateChanged(auth, user=>{
+  if(user) window.location.href = 'jobs.html';
+});
+</script>
+</body>
+</html>

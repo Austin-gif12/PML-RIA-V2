@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PML RIA">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0E0602">
+<link rel="icon" href="assets/icon-180.png">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<title>PML Fire Protection — RIA</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="ria.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <a class="brand" href="jobs.html" title="Back to jobs"><img src="assets/logo-light.png" alt="PML"><span class="brand-sub">Fire<br>Protection</span></a>
+    <a class="btn btn-ghost btn-sm" href="jobs.html">← Jobs</a>
+    <span class="topbar-title" id="topbarJob">Record of Installation Activities</span>
+  </div>
+  <div class="topbar-actions">
+    <button class="btn btn-green" id="printBtn">🖨 Print / PDF</button>
+    <button class="btn btn-ghost btn-sm" id="signOutBtn">Sign Out</button>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="print-only print-head">
+    <img class="ph-logo" src="assets/logo-dark-print.png" alt="PML">
+    <div class="ph-title">
+      <div class="ph-eyebrow">Q-Mark Fire Door Installation Scheme</div>
+      <div class="ph-h">Record of Installation Activities</div>
+    </div>
+    <div class="ph-ref">
+      <div><span>RIA Ref</span><b id="phRia">—</b></div>
+      <div><span>Project Ref</span><b id="phProj">—</b></div>
+    </div>
+  </div>
+
+  <section class="job-hero">
+    <div>
+      <div class="eyebrow">Record of Installation Activities</div>
+      <h1 id="heroTitle">Loading job…</h1>
+      <p id="heroAddr"></p>
+    </div>
+    <div class="chips">
+      <div class="chip"><b id="chipDoors">0</b>doors</div>
+      <div class="chip"><b id="chipPhotos">0</b>photos</div>
+    </div>
+  </section>
+
+  <div class="status-bar online" id="statusBar">
+    <div class="status-dot"></div>
+    <span id="statusText">Connecting…</span>
+  </div>
+
+  <div class="card job-card">
+    <div class="card-header">
+      <h2>Job &amp; Company Details <span class="tag">Q-MARK FIRE DOOR INSTALLATION SCHEME</span></h2>
+    </div>
+    <div class="card-body">
+      <div class="form-grid">
+        <div class="field">
+          <label>RIA Register Reference Number <span class="req">*</span></label>
+          <input type="text" id="riaRef" placeholder="e.g. RIA-2024-001" autocomplete="off">
+        </div>
+        <div class="field">
+          <label>Internal Installation Project Reference</label>
+          <input type="text" id="projRef" placeholder="e.g. PML-2024-052" autocomplete="off">
+        </div>
+        <div class="field">
+          <label>Certified Company Name</label>
+          <input type="text" value="Planning Manager LTD (PML Fire Protection)" readonly>
+        </div>
+        <div class="field">
+          <label>Company Certificate Number</label>
+          <input type="text" value="4322" readonly>
+        </div>
+        <div class="field">
+          <label>Approved Person's Name <span class="req">*</span></label>
+          <select id="approvedPerson">
+            <option value="">— Select Approved Person —</option>
+            <option>Paul Bennet</option>
+            <option>Austin Leivers</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Approved Person's Q-Mark Number</label>
+          <input type="text" id="approvedNum" placeholder="e.g. AP-XXXX" autocomplete="off">
+        </div>
+        <div class="field full">
+          <label>Client Name &amp; Site Address <span class="req">*</span></label>
+          <textarea id="siteAddress" rows="2" placeholder="Client name, building name, street, town, postcode"></textarea>
+        </div>
+      </div>
+      <div class="section-divider">Declaration</div>
+      <div class="declaration">
+        I declare by signing that the work undertaken fully complies with the requirements of the Q-Mark Fire Door Installation scheme and that the work undertaken complies with any local regulations in force at the specific project site location that do not conflict with scheme requirements.
+      </div>
+      <div class="form-grid">
+        <div class="field">
+          <label>Signature (print name)</label>
+          <input type="text" id="sigName" placeholder="Full name as signature">
+        </div>
+        <div class="field">
+          <label>Date</label>
+          <input type="date" id="sigDate">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="drawingsSection">
+    <div class="card-header">
+      <h2>Drawings &amp; Pins</h2>
+      <button class="btn btn-ghost btn-sm" id="uploadDrawingBtn">＋ Upload Drawing</button>
+    </div>
+    <div class="card-body">
+      <div class="no-print flow-note">
+        <b>How it works:</b> upload a PDF for each floor, then tap the drawing to drop a numbered pin — that creates a new door and opens its pre-installation survey. Pins are amber while the survey is in progress, blue once it's complete and ready to install, and green once installed.
+      </div>
+      <div class="new-drawing-form" id="newDrawingForm" hidden>
+        <div class="field">
+          <label>Name this floor / drawing</label>
+          <input type="text" id="ndLabel" placeholder="e.g. Ground Floor">
+        </div>
+        <div style="display:flex;gap:10px;margin-top:10px">
+          <button class="btn btn-blue btn-sm" id="ndSave">Save Drawing</button>
+          <button class="btn btn-outline btn-sm" id="ndCancel">Cancel</button>
+        </div>
+      </div>
+      <div class="tabs" id="drawingTabs" hidden></div>
+      <div id="drawingView" hidden></div>
+      <div id="pinsView" hidden></div>
+      <div class="empty-note" id="drawingsEmpty">No drawings uploaded yet — tap "＋ Upload Drawing" to add your first floor plan (one PDF per floor).</div>
+    </div>
+  </div>
+  <input type="file" id="drawingInput" accept="application/pdf" style="display:none">
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Fire Door Installation Entries</h2>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost btn-sm" id="collapseAllBtn">⊟ Minimise all</button>
+        <button class="btn btn-ghost btn-sm" id="addDoorTop">＋ Add Door</button>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="no-print flow-note">
+        <b>How each door works:</b> 1. complete the <b>Pre-installation survey</b> (all six aspects, with a photo of each) &nbsp;→&nbsp; 2. the <b>Installation record</b> unlocks &nbsp;→&nbsp; 3. add the installation photos.
+      </div>
+      <div id="doorList"></div>
+      <div class="empty-note" id="doorEmpty">No doors on this job yet — tap "＋ Add Door".</div>
+      <div class="table-actions">
+        <button class="btn btn-blue btn-sm" id="addDoorBottom">＋ Add another door</button>
+        <span style="font-size:11px;color:var(--muted)">Changes save automatically and sync to everyone on this job</span>
+      </div>
+      <div class="print-block" id="printRia"></div>
+    </div>
+  </div>
+
+  <div class="print-block" id="printPacks"></div>
+</div>
+
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" id="lbClose">✕</button>
+  <img id="lightboxImg" src="" alt="Photo">
+</div>
+
+<input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none">
+<input type="file" id="galleryInput" accept="image/*" multiple style="display:none">
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { auth, db } from "./firebase-init.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+import {
+  doc, collection, query, orderBy, onSnapshot, addDoc, updateDoc, deleteDoc, getDocs, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+// ─── OPTIONS ──────────────────────────────────────────────────────────────────
+const SEL='— Select —';
+const LOCS=[SEL,'Front Entrance','Rear Entrance','Side Entrance','Stairwell - Ground Floor','Stairwell - 1st Floor','Stairwell - 2nd Floor','Stairwell - 3rd Floor','Stairwell - Basement','Corridor - Ground Floor','Corridor - 1st Floor','Corridor - 2nd Floor','Corridor - 3rd Floor','Plant Room','Electrical Room','Boiler Room','Lift Lobby - Ground Floor','Lift Lobby - 1st Floor','Lift Lobby - 2nd Floor','Lobby / Entrance Hall','Flat Entrance - Flat 1','Flat Entrance - Flat 2','Flat Entrance - Flat 3','Flat Entrance - Flat 4','Flat Entrance - Flat 5','Flat Entrance - Flat 6','Flat Entrance - Flat 7','Flat Entrance - Flat 8','Flat Entrance - Flat 9','Flat Entrance - Flat 10','Kitchen','Bedroom','Living Room','Office','Store Room','Refuse Room','Communal Area','Escape Route','Other (see comments)'];
+const FPS=[SEL,'FD30','FD30S','FD60','FD60S','FD90','FD90S','FD120','FD120S','E30 (EN)','E60 (EN)','EW30 (EN)','EW60 (EN)','EI30 (EN)','EI60 (EN)'];
+const PLUGC=[SEL,'None / Not Present','White','Black','Red','Blue','Yellow','Green','Orange','Purple','Brown','Grey','White & Blue','White & Red','White & Black','White & Yellow','White & Green','Red & Blue','Other (see comments)'];
+const PLUGI=[SEL,'PML Label Applied','PML Plug Fitted','PML Plug + Label','Certification Sticker','Q-Mark Label','None Applied','Other (see comments)'];
+const DDOC=[SEL,'Manufacturer Cert / Data Sheet','BM TRADA Q-Mark Certificate','Fire Test Report','Global Assessment Report','Field of Application (EXAP)','Third Party Cert (Exova)','Third Party Cert (IFCC)','Manufacturer Installation Instructions','Project Specification','Engineers Report','N/A','Other (see comments)'];
+const FSDOC=[SEL,'Manufacturer Installation Instructions','BS 8214:2016 Compliant','BS 8214:2026 Compliant','Intumescent Mastic Cert','Mineral Wool Cert','PU Foam Fire Rating Cert','Fire Stopping Inspection Record','Project Specification','N/A','Other (see comments)'];
+const INITS=['— —','PB','AL','Other'];
+const PHOTO_SLOTS=[{key:'before',label:'Before Installation'},{key:'during',label:'During / After Installation',lockedUntilSurvey:true},{key:'extra',label:'Additional Details'}];
+const DOOR_DEFAULTS={ref:'',loc:LOCS[0],locFree:'',fp:FPS[0],date:'',init:INITS[0],initFree:'',plugMfr:PLUGC[0],plugInst:PLUGI[0],doorDoc:DDOC[0],fsDoc:FSDOC[0],comments:''};
+const INSTALL_KEYS=['fp','date','init','plugMfr','plugInst','doorDoc','fsDoc'];
+const LOCKED_FIELDS=['fp','date','init','initFree','plugMfr','plugInst','doorDoc','fsDoc','comments'];
+const JOB_FIELDS=['riaRef','projRef','approvedPerson','approvedNum','siteAddress','sigName','sigDate'];
+const DEBOUNCE=600;
+
+// Pre-installation survey — follows the BM TRADA "Fire Door Pre-Installation Survey" (Iss 1, 12/12/25).
+const SV_HEADER=[
+ {k:'init',label:'Surveying approved person / operative initials',opts:['PB','AL','Other']},
+ {k:'sig',label:'Surveyor signature (name)',opts:['Paul Bennet','Austin Leivers','Other']},
+ {k:'date',label:'Date of survey',date:true},
+ {k:'res',label:'Client specified fire resistance',opts:['FD30','FD30S','FD60','FD60S','FD90','FD90S','FD120','FD120S']},
+];
+const ASPECTS=[
+ {id:'existing',area:'The pre-existing fire door/s',name:'Considerations',
+  guide:'Existing door situation before the new doorset goes in.',
+  fields:[{k:'exSit',label:'What is there now?',opts:['No existing door (new opening)','Existing door & frame to be removed','Existing door to be removed, frame retained','Existing door to be retained']}]},
+ {id:'constr',area:'The substrate',name:'Construction type / makeup',
+  guide:'Supporting construction type, e.g. brickwork, concrete block, timber or steel stud with plasterboard, including, where visible, the number of boards, thickness and type.',
+  fields:[{k:'cType',label:'Construction type',opts:['Brickwork','Concrete block','Concrete','Timber stud + plasterboard','Steel stud + plasterboard','Other (see notes)']},
+          {k:'cBoards',label:'Plasterboard layers (each side)',opts:['Not applicable','1 layer','2 layers','3 layers']},
+          {k:'cBoardT',label:'Board thickness / type',opts:['Not applicable','12.5mm standard','12.5mm fire-rated','15mm fire-rated','Other (see notes)']}]},
+ {id:'thick',area:'The substrate',name:'Thickness',
+  guide:'Overall thickness of the wall including any plasterboard cladding.',
+  fields:[{k:'thk',label:'Overall wall thickness',num:true,ph:'e.g. 125'}]},
+ {id:'cond',area:'The substrate',name:'Condition',
+  guide:'Any visible damage to the structural opening that may affect fire-stopping or frame fixing. Report other local compartment line concerns to the Responsible Person or Specifier of the Works.',
+  fields:[{k:'cnd',label:'Condition of opening',opts:['Sound — no visible damage','Minor damage — to be made good','Significant damage — needs repair first','Other concern (see notes)']},
+          {k:'rep',label:'Concern reported to',opts:['Responsible Person','Specifier of the Works','Both'],onlyIfConcern:true}]},
+ {id:'size',area:'The opening',name:'Size',
+  guide:'Overall structural opening sizes, so doorset tolerances, fixing lengths and fire stopping products can be selected. Take finished floor levels and coverings into account.',
+  fields:[{k:'w',label:'Width',num:true,ph:'e.g. 926'},{k:'h',label:'Height',num:true,ph:'e.g. 2040'},{k:'d',label:'Depth',num:true,ph:'e.g. 125'},
+          {k:'ffl',label:'Floor levels / coverings considered',opts:['Yes','No','Not applicable']}]},
+ {id:'prox',area:'The opening',name:'Proximity to other elements',
+  guide:'Distances between other building elements, e.g. ceiling, other doorsets, penetrations or openings.',
+  fields:[{k:'toC',label:'Distance to ceiling',num:true,ph:'e.g. 300'},{k:'toD',label:'Nearest other doorset / opening',num:true,ph:'e.g. 900'},
+          {k:'pen',label:'Penetrations nearby',opts:['None','Yes (see notes)']}]},
+];
+
+const jobId=new URLSearchParams(location.search).get('job');
+if(!jobId) location.replace('jobs.html');
+
+const $=id=>document.getElementById(id);
+const doorList=$('doorList');
+
+let tt;
+function showToast(msg,type='success'){
+  const t=$('toast');t.textContent=msg;t.className=`toast ${type} show`;
+  clearTimeout(tt);tt=setTimeout(()=>t.className='toast',3200);
+}
+
+// ─── SYNC STATUS ──────────────────────────────────────────────────────────────
+const pendingSources=new Set();
+function setPending(src,flag){flag?pendingSources.add(src):pendingSources.delete(src);updateStatus();}
+function updateStatus(){
+  const online=navigator.onLine;
+  $('statusBar').className='status-bar '+(online?'online':'offline');
+  $('statusText').textContent=!online
+    ? 'Offline — changes are saved on this device and will sync when you are back online'
+    : pendingSources.size
+      ? 'Online — syncing changes…'
+      : 'Online — all changes synced';
+}
+window.addEventListener('online',updateStatus);
+window.addEventListener('offline',updateStatus);
+updateStatus();
+
+$('signOutBtn').addEventListener('click',()=>signOut(auth));
+$('printBtn').addEventListener('click',()=>window.print());
+
+// ─── JOB HEADER ───────────────────────────────────────────────────────────────
+const jobRef=doc(db,'jobs',jobId);
+const jobPending={};
+let jobTimer;
+
+function flushJob(){
+  const data={...jobPending};
+  if(!Object.keys(data).length)return;
+  for(const k in data)delete jobPending[k];
+  updateDoc(jobRef,{...data,updatedAt:serverTimestamp()}).catch(err=>showToast('Save failed: '+err.message,'error'));
+}
+function queueJobSave(field,val){
+  jobPending[field]=val;
+  clearTimeout(jobTimer);
+  jobTimer=setTimeout(flushJob,DEBOUNCE);
+}
+JOB_FIELDS.forEach(id=>{
+  const el=$(id);
+  const h=()=>queueJobSave(id,el.value);
+  el.addEventListener('input',h);
+  el.addEventListener('change',h);
+});
+
+let touchTimer;
+function touchJob(){
+  clearTimeout(touchTimer);
+  touchTimer=setTimeout(()=>updateDoc(jobRef,{updatedAt:serverTimestamp()}).catch(()=>{}),3000);
+}
+
+// ─── DOORS: saving ────────────────────────────────────────────────────────────
+const doorsCol=collection(db,'jobs',jobId,'doors');
+const rows=new Map();
+const doorPending={};
+const doorTimers={};
+
+function flushDoor(id){
+  const data=doorPending[id];
+  if(!data)return;
+  delete doorPending[id];
+  updateDoc(doc(doorsCol,id),{...data,updatedAt:serverTimestamp()}).catch(err=>showToast('Save failed: '+err.message,'error'));
+}
+// Survey answers live in a "pre" map on the door; "pre.cType" style paths update one answer without touching the rest.
+function queueDoorSave(id,field,val){
+  (doorPending[id]??={})[field]=val;
+  clearTimeout(doorTimers[id]);
+  doorTimers[id]=setTimeout(()=>flushDoor(id),DEBOUNCE);
+  touchJob();
+}
+function flushAll(){
+  flushJob();
+  Object.keys(doorPending).forEach(flushDoor);
+}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flushAll();});
+window.addEventListener('pagehide',flushAll);
+
+function mkSel(opts){
+  const s=document.createElement('select');
+  opts.forEach(o=>{const op=document.createElement('option');op.value=op.textContent=o;s.appendChild(op);});
+  return s;
+}
+function mkInp(ph,type='text'){
+  const i=document.createElement('input');
+  i.type=type;i.placeholder=ph;i.autocomplete='off';
+  return i;
+}
+function mkField(label,control,extraClass=''){
+  const fd=document.createElement('div');fd.className='field '+extraClass;
+  const lb=document.createElement('label');lb.textContent=label;
+  fd.append(lb,control);
+  return fd;
+}
+const clean=(el)=>{const v=el.value;return v&&v!==SEL&&v!=='— —'?v:'';};
+const photoCount=(r,slot)=>r.photos.filter(p=>p.slot===slot).length;
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const dash=s=>s?esc(s):'—';
+const miss=s=>s?esc(s):'<span class="miss">not completed</span>';
+
+// ─── DOORS: survey logic ──────────────────────────────────────────────────────
+const needsReport=r=>{const c=clean(r.pre.cnd);return !!c&&!/^Sound/.test(c);};
+const aspectFieldsDone=(r,a)=>a.fields.every(f=>(f.onlyIfConcern&&!needsReport(r))||clean(r.pre[f.k]));
+const aspectDone=(r,a)=>aspectFieldsDone(r,a)&&photoCount(r,'pre_'+a.id)>0;
+function surveyStats(r){
+  const hdr=SV_HEADER.filter(f=>clean(r.pre[f.k])).length;
+  const asp=ASPECTS.filter(a=>aspectDone(r,a)).length;
+  return {hdr,asp,complete:hdr===SV_HEADER.length&&asp===ASPECTS.length};
+}
+// Doors that already have installation details recorded (from before the survey existed) stay editable.
+const hasInstallData=r=>INSTALL_KEYS.some(k=>r.f[k].value!==DOOR_DEFAULTS[k]);
+// Pin colour on a drawing: amber = survey in progress, blue = ready to install, green = installed.
+function doorStatusColor(r){
+  const s=surveyStats(r);
+  const installed=INSTALL_KEYS.slice(0,3).every(k=>r.f[k].value!==DOOR_DEFAULTS[k]);
+  if(installed)return 'green';
+  if(s.complete||hasInstallData(r))return 'blue';
+  return 'amber';
+}
+
+function refreshDoor(id){
+  const r=rows.get(id);if(!r)return;
+  const s=surveyStats(r);
+  const legacy=hasInstallData(r);
+  const locked=!s.complete&&!legacy;
+
+  r.wraps.rep.hidden=!needsReport(r);
+
+  r.barFill.style.width=((s.hdr+s.asp)/(SV_HEADER.length+ASPECTS.length)*100)+'%';
+  r.progText.textContent=`${s.asp} of ${ASPECTS.length} aspects complete`;
+  r.hdrCount.textContent=`${s.hdr}/${SV_HEADER.length}`;
+  ASPECTS.forEach(a=>{
+    const done=aspectDone(r,a),ph=photoCount(r,'pre_'+a.id)>0;
+    r.aspStatus[a.id].textContent=done?'✓ Complete':(ph?'Photo ✓ · answers needed':(aspectFieldsDone(r,a)?'Answers ✓ · photo needed':'Not started'));
+    r.aspStatus[a.id].className=done?'ok':'';
+  });
+
+  const cls=s.complete?'green':(s.hdr+s.asp?'amber':'');
+  r.pillSurvey.className='pill '+cls;r.dotSurvey.className='dot '+cls;
+  r.pillSurvey.textContent=s.complete?'Survey complete':`Survey ${s.asp}/${ASPECTS.length}`;
+
+  const installed=INSTALL_KEYS.slice(0,3).every(k=>r.f[k].value!==DOOR_DEFAULTS[k]);
+  r.pillInstall.className='pill '+(locked?'':installed?'green':'amber');
+  r.dotInstall.className='dot '+(locked?'':installed?'green':'amber');
+  r.pillInstall.textContent=locked?'🔒 Installation locked':installed?'Installation recorded':'Ready to install';
+
+  LOCKED_FIELDS.forEach(k=>{r.f[k].disabled=locked;});
+  r.lockNotice.hidden=!locked;
+  r.lockNoticeText.textContent=`Complete the pre-installation survey first (${s.asp} of ${ASPECTS.length} aspects done). The installation record unlocks when every aspect is answered and photographed.`;
+  r.slots.during.setLocked(locked);
+  r.locked=locked;
+  updateChips();
+  if(r.pin)refreshPinCrop(id);
+  renderPinsOnActiveDrawing();
+  if(pinsViewActive)renderPinsList();
+}
+
+// ─── DOORS: building a panel ──────────────────────────────────────────────────
+let activeTarget=null;
+function closePickers(){
+  document.querySelectorAll('.photo-picker.open').forEach(p=>{
+    p.classList.remove('open');
+    const b=p.parentElement?.querySelector('.add-photo-btn');
+    if(b)b.style.display='flex';
+  });
+}
+
+function makePhotoSlot(id,key,label){
+  const slot=document.createElement('div');slot.className='photo-slot';
+  if(label){const sh=document.createElement('div');sh.className='photo-slot-hdr';sh.textContent=label;slot.appendChild(sh);}
+  const thumbs=document.createElement('div');thumbs.className='photo-thumbs';
+  const count=document.createElement('div');count.className='photo-count';
+  const lockNote=document.createElement('div');lockNote.className='slot-lock';lockNote.hidden=true;
+  lockNote.textContent='🔒 Locked until the pre-installation survey is complete';
+
+  const addBtn=document.createElement('button');
+  addBtn.className='add-photo-btn';
+  addBtn.innerHTML='<span class="cam-icon">📷</span> Add Photo';
+
+  const picker=document.createElement('div');picker.className='photo-picker';
+  const pick=inputId=>{
+    activeTarget={doorId:id,slot:key};
+    const inp=$(inputId);inp.value='';inp.click();closePickers();
+  };
+  const takeOpt=document.createElement('button');takeOpt.className='picker-option';
+  takeOpt.innerHTML='<span class="p-icon">📸</span><span class="p-text"><span class="p-title">Take Photo Now</span><span class="p-sub">Opens your camera — snap it on the spot</span></span>';
+  takeOpt.addEventListener('click',()=>pick('cameraInput'));
+  const upOpt=document.createElement('button');upOpt.className='picker-option';
+  upOpt.innerHTML='<span class="p-icon">🖼️</span><span class="p-text"><span class="p-title">Upload from Files</span><span class="p-sub">Choose photos already saved on this device</span></span>';
+  upOpt.addEventListener('click',()=>pick('galleryInput'));
+  const cr=document.createElement('div');cr.className='picker-cancel-row';
+  const cb=document.createElement('button');cb.textContent='Cancel';
+  cb.addEventListener('click',()=>{picker.classList.remove('open');addBtn.style.display='flex';});
+  cr.appendChild(cb);
+  picker.append(takeOpt,upOpt,cr);
+  addBtn.addEventListener('click',()=>{closePickers();picker.classList.add('open');addBtn.style.display='none';});
+
+  slot.append(thumbs,count,lockNote,addBtn,picker);
+  return {el:slot,thumbs,count,setLocked(flag){
+    lockNote.hidden=!flag;
+    if(flag){picker.classList.remove('open');addBtn.style.display='none';}else addBtn.style.display='flex';
+  }};
+}
+
+function buildDoor(id,index){
+  const panel=document.createElement('div');panel.className='door-panel';panel.dataset.id=id;
+  const r={panel,f:{},pre:{},wraps:{},aspStatus:{},slots:{},photos:[],locked:true,inited:false,unsub:null,pin:null};
+
+  const bind=(field,el)=>{
+    r.f[field]=el;
+    const h=()=>{queueDoorSave(id,field,el.value);refreshDoor(id);};
+    el.addEventListener('input',h);el.addEventListener('change',h);
+    return el;
+  };
+  const bindPre=(k,el)=>{
+    r.pre[k]=el;
+    const h=()=>{queueDoorSave(id,'pre.'+k,el.value);refreshDoor(id);};
+    el.addEventListener('input',h);el.addEventListener('change',h);
+    return el;
+  };
+
+  // head: number, ref, location, status pills, remove
+  const head=document.createElement('div');head.className='dp-head';
+  const num=document.createElement('span');num.className='dp-num';
+  const ref=bind('ref',mkInp('FD-01'));ref.className='dp-ref-input';
+  const loc=bind('loc',mkSel(LOCS));loc.className='dp-loc-select';
+  const locFree=bind('locFree',mkInp('Or type location'));locFree.className='dp-loc-free';
+  const locBox=document.createElement('div');locBox.className='dp-loc';locBox.append(loc,locFree);
+  const chips=document.createElement('div');chips.className='dp-chips';
+  const pillSurvey=document.createElement('span');pillSurvey.className='pill';
+  const pillInstall=document.createElement('span');pillInstall.className='pill';
+  chips.append(pillSurvey,pillInstall);
+  const collapseBtn=document.createElement('button');collapseBtn.type='button';collapseBtn.className='collapse-btn';
+  collapseBtn.addEventListener('click',()=>setCollapsed(id,!r.collapsed));
+  const del=document.createElement('button');del.className='remove-row';del.textContent='✕';del.title='Remove this door';
+  del.addEventListener('click',()=>removeDoor(id));
+  head.append(num,ref,locBox,chips,collapseBtn,del);
+
+  // tabs
+  const tabs=document.createElement('div');tabs.className='tabs';
+  const mkTab=(key,text)=>{
+    const b=document.createElement('button');b.className='tab';b.dataset.tab=key;
+    const dot=document.createElement('span');dot.className='dot';
+    b.append(dot,document.createTextNode(text));
+    b.addEventListener('click',()=>showTab(id,key));
+    tabs.appendChild(b);return {b,dot};
+  };
+  const tSurvey=mkTab('survey','1 · Pre-installation survey');
+  const tInstall=mkTab('install','2 · Installation record');
+  const tPhotos=mkTab('photos','3 · Photos');
+
+  // survey panel
+  const pSurvey=document.createElement('div');pSurvey.className='panel';pSurvey.dataset.panel='survey';
+  const prog=document.createElement('div');prog.className='progress';
+  const bar=document.createElement('div');bar.className='bar';const fill=document.createElement('i');bar.appendChild(fill);
+  const progText=document.createElement('span');
+  prog.append(bar,progText);pSurvey.appendChild(prog);
+
+  const hs=document.createElement('div');hs.className='pi-section';
+  const hh=document.createElement('div');hh.className='pi-h';hh.innerHTML='<span>Survey details</span><em></em>';
+  const hdrCount=hh.querySelector('em');
+  const hg=document.createElement('div');hg.className='pi-grid';
+  SV_HEADER.forEach(f=>{
+    const el=f.opts?mkSel([SEL,...f.opts]):mkInp('',f.date?'date':'text');
+    bindPre(f.k,el);hg.appendChild(mkField(f.label,el));
+  });
+  hs.append(hh,hg);pSurvey.appendChild(hs);
+
+  ASPECTS.forEach(a=>{
+    const box=document.createElement('div');box.className='pi-section';
+    const h=document.createElement('div');h.className='pi-h';
+    h.innerHTML=`<span>${a.area}</span><em></em>`;
+    r.aspStatus[a.id]=h.querySelector('em');
+    const top=document.createElement('div');top.className='aspect-top';top.innerHTML=`<h3>${a.name}</h3>`;
+    const guide=document.createElement('div');guide.className='guide';
+    const gb=document.createElement('b');gb.textContent='BM TRADA guidance: ';guide.append(gb,a.guide);
+    const g=document.createElement('div');g.className='pi-grid';
+    a.fields.forEach(f=>{
+      let el;
+      if(f.opts)el=mkSel([SEL,...f.opts]);
+      else{el=mkInp(f.ph||'','number');el.inputMode='numeric';}
+      bindPre(f.k,el);
+      const wrap=mkField(f.label,el,f.num?'unit':'');
+      r.wraps[f.k]=wrap;g.appendChild(wrap);
+    });
+    const nf=document.createElement('div');nf.className='note-field';
+    const ta=document.createElement('textarea');ta.placeholder='Notes (optional)';
+    bindPre('n_'+a.id,ta);nf.appendChild(ta);
+    const phw=document.createElement('div');phw.className='aspect-photos';
+    const slot=makePhotoSlot(id,'pre_'+a.id,'');
+    r.slots['pre_'+a.id]=slot;phw.appendChild(slot.el);
+    box.append(h,top,guide,g,nf,phw);pSurvey.appendChild(box);
+  });
+
+  // installation panel
+  const pInstall=document.createElement('div');pInstall.className='panel';pInstall.dataset.panel='install';
+  const lockNotice=document.createElement('div');lockNotice.className='lock-notice';
+  const lockNoticeText=document.createElement('span');
+  const goBtn=document.createElement('button');goBtn.className='btn btn-blue btn-sm';goBtn.textContent='Go to the survey';
+  goBtn.addEventListener('click',()=>showTab(id,'survey'));
+  lockNotice.append(document.createTextNode('🔒 '),lockNoticeText,goBtn);
+  const ig=document.createElement('div');ig.className='pi-grid install-grid';
+  const initBox=document.createElement('div');initBox.className='init-pair';
+  const initSel=bind('init',mkSel(INITS));const initFree=bind('initFree',mkInp('If other'));
+  initBox.append(initSel,initFree);
+  const cta=bind('comments',document.createElement('textarea'));cta.rows=2;cta.placeholder='Notes...';
+  ig.append(
+    mkField('Fire resistance (installer declared)',bind('fp',mkSel(FPS))),
+    mkField('Installation completion date',bind('date',mkInp('','date'))),
+    mkField('Installed by',initBox),
+    mkField('Q-Mark manufacturer plug present',bind('plugMfr',mkSel(PLUGC))),
+    mkField('Installer plug / label fitted',bind('plugInst',mkSel(PLUGI))),
+    mkField('Fire door supporting documentation',bind('doorDoc',mkSel(DDOC))),
+    mkField('Fire stopping supporting documentation',bind('fsDoc',mkSel(FSDOC))),
+    mkField('Comments',cta,'full')
+  );
+  pInstall.append(lockNotice,ig);
+
+  // photos panel
+  const pPhotos=document.createElement('div');pPhotos.className='panel';pPhotos.dataset.panel='photos';
+  const psw=document.createElement('div');psw.className='photo-slots';
+  PHOTO_SLOTS.forEach(({key,label})=>{
+    const slot=makePhotoSlot(id,key,label);
+    r.slots[key]=slot;psw.appendChild(slot.el);
+  });
+  const psNote=document.createElement('p');psNote.className='panel-note';
+  psNote.textContent='Installation photographs. The pre-installation survey photos are on the survey tab, against each aspect.';
+  pPhotos.append(psNote,psw);
+
+  panel.append(head,tabs,pSurvey,pInstall,pPhotos);
+  Object.assign(r,{num,barFill:fill,progText,hdrCount,pillSurvey,pillInstall,dotSurvey:tSurvey.dot,dotInstall:tInstall.dot,dotPhotos:tPhotos.dot,tabs,lockNotice,lockNoticeText,collapseBtn,collapsed:false});
+  setCollapsed(id,false,r);
+  rows.set(id,r);
+  doorList.insertBefore(panel,doorList.children[index]||null);
+
+  r.unsub=onSnapshot(collection(db,'jobs',jobId,'doors',id,'photos'),snap=>{
+    r.photos=snap.docs.map(d=>({id:d.id,...d.data()}))
+      .sort((a,b)=>(a.createdAt?.toMillis?.()??Infinity)-(b.createdAt?.toMillis?.()??Infinity));
+    renderThumbs(id);
+    refreshDoor(id);
+    setPending('photos-'+id,snap.metadata.hasPendingWrites);
+  });
+  return r;
+}
+
+// Collapse state is a per-device screen preference, not saved data — it isn't written to Firestore.
+function setCollapsed(id,flag,rowOverride){
+  const r=rowOverride||rows.get(id);if(!r)return;
+  r.collapsed=flag;
+  r.panel.classList.toggle('collapsed',flag);
+  r.collapseBtn.innerHTML=flag?'<span class="chev">▸</span> Expand':'<span class="chev">▾</span> Minimise';
+  r.collapseBtn.title=flag?'Expand this door':'Minimise this door';
+  updateCollapseAllLabel();
+}
+function updateCollapseAllLabel(){
+  const anyExpanded=[...rows.values()].some(r=>!r.collapsed);
+  $('collapseAllBtn').textContent=anyExpanded?'⊟ Minimise all':'⊞ Expand all';
+}
+$('collapseAllBtn').addEventListener('click',()=>{
+  const anyExpanded=[...rows.values()].some(r=>!r.collapsed);
+  rows.forEach((r,id)=>setCollapsed(id,anyExpanded));
+});
+
+function showTab(id,key){
+  const r=rows.get(id);if(!r)return;
+  r.tabs.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===key));
+  r.panel.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.dataset.panel===key));
+}
+
+function applyDoorData(id,d){
+  const r=rows.get(id);if(!r)return;
+  r.pin=d.pin||null;
+  const pend=doorPending[id]||{};
+  for(const [field,el] of Object.entries(r.f)){
+    if(field in pend||el===document.activeElement)continue;
+    const v=d[field]??DOOR_DEFAULTS[field];
+    if(el.value!==v)el.value=v;
+  }
+  for(const [k,el] of Object.entries(r.pre)){
+    if(('pre.'+k) in pend||el===document.activeElement)continue;
+    const raw=d.pre?.[k];
+    const v=raw==null?(el.tagName==='SELECT'?SEL:''):raw;
+    if(el.value!==v)el.value=v;
+  }
+  refreshDoor(id);
+  if(r.pin)refreshPinCrop(id);
+  renderPinsOnActiveDrawing();
+  if(pinsViewActive)renderPinsList();
+  if(!r.inited){
+    r.inited=true;
+    const s=surveyStats(r);
+    showTab(id,(s.complete||hasInstallData(r))?'install':'survey');
+  }
+}
+
+// Next free FD-nn name: highest existing number + 1 (FD-01…FD-99, then FD-100 onwards).
+function nextDoorRef(){
+  let max=0;
+  rows.forEach(r=>{
+    const m=/^FD-(\d+)$/i.exec(r.f.ref.value.trim());
+    if(m)max=Math.max(max,parseInt(m[1],10));
+  });
+  const n=max+1;
+  return 'FD-'+(n<10?'0'+n:n);
+}
+
+async function addDoor(){
+  try{
+    await addDoc(doorsCol,{...DOOR_DEFAULTS,ref:nextDoorRef(),pre:{},order:Date.now(),updatedAt:serverTimestamp()});
+    touchJob();
+  }catch(err){showToast('Could not add door: '+err.message,'error');}
+}
+$('addDoorTop').addEventListener('click',addDoor);
+$('addDoorBottom').addEventListener('click',addDoor);
+
+async function removeDoor(id){
+  if(!confirm('Remove this door, its survey and all of its photos? This affects everyone on this job.'))return;
+  clearTimeout(doorTimers[id]);delete doorPending[id];
+  try{
+    const photos=await getDocs(collection(db,'jobs',jobId,'doors',id,'photos'));
+    await Promise.all(photos.docs.map(p=>deleteDoc(p.ref)));
+    await deleteDoc(doc(doorsCol,id));
+    touchJob();
+  }catch(err){showToast('Could not remove door: '+err.message,'error');}
+}
+
+function renumber(){
+  [...doorList.children].forEach((p,i)=>{rows.get(p.dataset.id).num.textContent=i+1;});
+  $('doorEmpty').style.display=rows.size?'none':'block';
+  updateChips();
+  updateCollapseAllLabel();
+  renderPinsOnActiveDrawing();
+  if(pinsViewActive)renderPinsList();
+}
+
+function updateChips(){
+  $('chipDoors').textContent=rows.size;
+  let n=0;rows.forEach(r=>n+=r.photos.length);
+  $('chipPhotos').textContent=n;
+}
+
+// ─── PHOTOS ───────────────────────────────────────────────────────────────────
+function renderThumbs(doorId){
+  const r=rows.get(doorId);if(!r)return;
+  Object.entries(r.slots).forEach(([key,s])=>{
+    const list=r.photos.filter(p=>p.slot===key);
+    s.thumbs.innerHTML='';
+    list.forEach(p=>{
+      const wrap=document.createElement('div');wrap.className='photo-thumb-wrap';
+      const img=document.createElement('img');img.src=p.data;img.className='photo-thumb';
+      img.addEventListener('click',()=>{$('lightboxImg').src=p.data;$('lightbox').classList.add('open');});
+      const del=document.createElement('button');del.className='thumb-del';del.textContent='✕';
+      del.addEventListener('click',e=>{
+        e.stopPropagation();
+        if(!confirm('Delete this photo for everyone on this job?'))return;
+        deleteDoc(doc(db,'jobs',jobId,'doors',doorId,'photos',p.id)).catch(err=>showToast('Could not delete photo: '+err.message,'error'));
+      });
+      wrap.append(img,del);s.thumbs.appendChild(wrap);
+    });
+    s.count.textContent=list.length?`${list.length} photo${list.length>1?'s':''} attached`:'';
+  });
+}
+
+// Firestore documents are capped at 1 MiB, so shrink until the base64 string fits comfortably.
+function compressImage(file){
+  return new Promise((resolve,reject)=>{
+    const url=URL.createObjectURL(file);
+    const img=new Image();
+    img.onload=()=>{
+      URL.revokeObjectURL(url);
+      let max=900,q=0.78,out='';
+      for(let i=0;i<5;i++){
+        let w=img.width,h=img.height;
+        if(w>max){h=Math.round(h*max/w);w=max;}
+        const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+        cv.getContext('2d').drawImage(img,0,0,w,h);
+        out=cv.toDataURL('image/jpeg',q);
+        if(out.length<800000)break;
+        max=Math.round(max*0.8);q=Math.max(0.4,q-0.08);
+      }
+      resolve(out);
+    };
+    img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('Could not read that image'));};
+    img.src=url;
+  });
+}
+
+async function handleFiles(input){
+  const target=activeTarget;
+  if(!target||!input.files||!input.files.length)return;
+  const files=[...input.files];
+  let done=0;
+  for(const file of files){
+    try{
+      const data=await compressImage(file);
+      await addDoc(collection(db,'jobs',jobId,'doors',target.doorId,'photos'),{
+        slot:target.slot,data,createdAt:serverTimestamp()
+      });
+      done++;
+    }catch(err){showToast('Photo failed: '+err.message,'error');}
+  }
+  if(done){touchJob();showToast(`✓ ${done} photo${done>1?'s':''} added`,'success');}
+}
+$('cameraInput').addEventListener('change',e=>handleFiles(e.target));
+$('galleryInput').addEventListener('change',e=>handleFiles(e.target));
+
+function closeLightbox(){$('lightbox').classList.remove('open');}
+$('lightbox').addEventListener('click',closeLightbox);
+$('lbClose').addEventListener('click',closeLightbox);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLightbox();});
+
+// ─── DRAWINGS & PINS ──────────────────────────────────────────────────────────
+const drawingsCol=collection(db,'jobs',jobId,'drawings');
+const drawings=new Map();
+const drawingImgCache=new Map();
+let activeDrawingId=null;
+let pinsViewActive=false;
+let pendingDrawing=null;
+let pendingFocusDoorId=null;
+
+async function loadPdfLib(){
+  if(window.pdfjsLib)return;
+  await new Promise((resolve,reject)=>{
+    const s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    s.onload=resolve;s.onerror=()=>reject(new Error('Could not load the PDF reader — check your connection'));
+    document.head.appendChild(s);
+  });
+  const wsrc=await (await fetch('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js')).text();
+  pdfjsLib.GlobalWorkerOptions.workerSrc=URL.createObjectURL(new Blob([wsrc],{type:'text/javascript'}));
+}
+
+// Firestore documents are capped at 1 MiB, so the rendered page is shrunk until it fits comfortably.
+async function renderPdfToDataUrl(file){
+  await loadPdfLib();
+  const buf=await file.arrayBuffer();
+  const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+  const page=await pdf.getPage(1);
+  const base=page.getViewport({scale:1});
+  let scale=Math.max(1600/Math.max(base.width,base.height),0.4);
+  let q=0.82,out='';
+  for(let i=0;i<5;i++){
+    const vp=page.getViewport({scale});
+    const cv=document.createElement('canvas');cv.width=Math.round(vp.width);cv.height=Math.round(vp.height);
+    const ctx=cv.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,cv.width,cv.height);
+    await page.render({canvasContext:ctx,viewport:vp}).promise;
+    out=cv.toDataURL('image/jpeg',q);
+    if(out.length<800000)break;
+    scale*=0.8;q=Math.max(0.45,q-0.08);
+  }
+  return out;
+}
+function guessDrawingLabel(name){
+  const base=name.replace(/\.pdf$/i,'').replace(/[_-]+/g,' ').replace(/\s+/g,' ').trim();
+  return base.replace(/\b\w/g,c=>c.toUpperCase())||'New Drawing';
+}
+
+$('uploadDrawingBtn').addEventListener('click',()=>$('drawingInput').click());
+$('drawingInput').addEventListener('change',async e=>{
+  const file=e.target.files[0];
+  e.target.value='';
+  if(!file)return;
+  if(file.type!=='application/pdf'&&!/\.pdf$/i.test(file.name)){showToast('Please choose a PDF file','error');return;}
+  showToast('Processing drawing…');
+  try{
+    const data=await renderPdfToDataUrl(file);
+    pendingDrawing={data};
+    $('ndLabel').value=guessDrawingLabel(file.name);
+    $('newDrawingForm').hidden=false;
+    $('ndLabel').focus();$('ndLabel').select();
+  }catch(err){showToast('Could not read that PDF: '+err.message,'error');}
+});
+$('ndCancel').addEventListener('click',()=>{pendingDrawing=null;$('newDrawingForm').hidden=true;});
+$('ndSave').addEventListener('click',async()=>{
+  if(!pendingDrawing)return;
+  const label=$('ndLabel').value.trim()||'Untitled';
+  const btn=$('ndSave');btn.disabled=true;
+  try{
+    const docRef=await addDoc(drawingsCol,{label,data:pendingDrawing.data,order:Date.now(),createdAt:serverTimestamp()});
+    pendingDrawing=null;$('newDrawingForm').hidden=true;
+    activeDrawingId=docRef.id;pinsViewActive=false;
+    touchJob();
+    showToast('✓ Drawing saved');
+  }catch(err){showToast('Could not save drawing: '+err.message,'error');}
+  btn.disabled=false;
+});
+
+function renderDrawingTabs(){
+  const bar=$('drawingTabs');
+  const list=[...drawings.values()].sort((a,b)=>(a.order??0)-(b.order??0));
+  bar.hidden=!list.length;
+  $('drawingsEmpty').style.display=list.length?'none':'block';
+  bar.innerHTML='';
+  list.forEach(d=>{
+    const b=document.createElement('button');
+    b.className='tab'+((!pinsViewActive&&d.id===activeDrawingId)?' active':'');
+    b.textContent=d.label;
+    b.addEventListener('click',()=>{activeDrawingId=d.id;pinsViewActive=false;renderDrawingTabs();renderDrawingView();});
+    bar.appendChild(b);
+  });
+  if(list.length){
+    const pv=document.createElement('button');
+    pv.className='tab'+(pinsViewActive?' active':'');
+    pv.innerHTML='📍&nbsp;View Pins';
+    pv.addEventListener('click',()=>{pinsViewActive=true;renderDrawingTabs();renderDrawingView();});
+    bar.appendChild(pv);
+  }
+}
+
+function renderDrawingView(){
+  const dv=$('drawingView'),pv=$('pinsView');
+  if(pinsViewActive){dv.hidden=true;pv.hidden=false;renderPinsList();return;}
+  pv.hidden=true;
+  if(!drawings.size){dv.hidden=true;return;}
+  dv.hidden=false;
+  const d=drawings.get(activeDrawingId);
+  dv.innerHTML='';
+  if(!d)return;
+  const wrap=document.createElement('div');wrap.className='drawing-canvas';
+  const img=document.createElement('img');img.src=d.data;img.alt=d.label;img.draggable=false;
+  const layer=document.createElement('div');layer.className='pins-layer';
+  wrap.append(img,layer);
+  wrap.addEventListener('click',e=>{
+    if(e.target.closest('.pin-marker'))return;
+    const rect=img.getBoundingClientRect();
+    if(!rect.width||!rect.height)return;
+    const xPct=(e.clientX-rect.left)/rect.width*100,yPct=(e.clientY-rect.top)/rect.height*100;
+    if(xPct<0||xPct>100||yPct<0||yPct>100)return;
+    dropPin(d.id,xPct,yPct);
+  });
+  dv.appendChild(wrap);
+  getDrawingImg(d.id);
+  renderPinsOnActiveDrawing();
+}
+
+function renderPinsOnActiveDrawing(){
+  if(pinsViewActive||!activeDrawingId)return;
+  const layer=document.querySelector('#drawingView .pins-layer');
+  if(!layer)return;
+  layer.innerHTML='';
+  rows.forEach((r,id)=>{
+    if(r.pin?.drawingId!==activeDrawingId)return;
+    const m=document.createElement('button');
+    m.type='button';m.className='pin-marker '+doorStatusColor(r);
+    m.style.left=r.pin.xPct+'%';m.style.top=r.pin.yPct+'%';
+    m.textContent=(r.f.ref.value||'').replace(/^FD-0*/i,'')||'•';
+    m.title=(r.f.ref.value||'Pin')+' — click to open';
+    m.addEventListener('click',e=>{e.stopPropagation();goToDoor(id);});
+    layer.appendChild(m);
+  });
+}
+
+function renderPinsList(){
+  const wrap=$('pinsView');
+  const pinned=[...rows.entries()].filter(([,r])=>r.pin);
+  if(!pinned.length){
+    wrap.innerHTML='<div class="empty-note">No pins dropped yet — open a drawing and tap it to drop your first pin.</div>';
+    return;
+  }
+  pinned.sort((a,b)=>{
+    const da=drawings.get(a[1].pin.drawingId)?.order??0,db_=drawings.get(b[1].pin.drawingId)?.order??0;
+    if(da!==db_)return da-db_;
+    return (a[1].f.ref.value||'').localeCompare(b[1].f.ref.value||'',undefined,{numeric:true});
+  });
+  wrap.innerHTML='';
+  const statusLabel={amber:'Survey in progress',blue:'Ready to install',green:'Installed'};
+  pinned.forEach(([id,r])=>{
+    const drawing=drawings.get(r.pin.drawingId);
+    const cls=doorStatusColor(r);
+    const row=document.createElement('div');row.className='pin-row';
+    const dot=document.createElement('span');dot.className='pin-dot '+cls;
+    dot.textContent=(r.f.ref.value||'').replace(/^FD-0*/i,'')||'•';
+    const info=document.createElement('div');info.className='pin-row-info';
+    const loc=r.f.loc.value!==LOCS[0]?r.f.loc.value:r.f.locFree.value;
+    info.innerHTML=`<b>${esc(r.f.ref.value||'—')}</b><span>${esc(drawing?.label||'Unknown drawing')}${loc?' · '+esc(loc):''}</span>`;
+    const status=document.createElement('span');status.className='pin-row-status '+cls;status.textContent=statusLabel[cls];
+    row.append(dot,info,status);
+    row.addEventListener('click',()=>{
+      pinsViewActive=false;activeDrawingId=r.pin.drawingId;
+      renderDrawingTabs();renderDrawingView();
+      setTimeout(()=>goToDoor(id),60);
+    });
+    wrap.appendChild(row);
+  });
+}
+
+async function dropPin(drawingId,xPct,yPct){
+  try{
+    const docRef=await addDoc(doorsCol,{
+      ...DOOR_DEFAULTS,ref:nextDoorRef(),pre:{},
+      pin:{drawingId,xPct:Math.round(xPct*10)/10,yPct:Math.round(yPct*10)/10},
+      order:Date.now(),updatedAt:serverTimestamp()
+    });
+    touchJob();
+    pendingFocusDoorId=docRef.id;
+  }catch(err){showToast('Could not drop pin: '+err.message,'error');}
+}
+
+function goToDoor(id){
+  const r=rows.get(id);if(!r)return;
+  setCollapsed(id,false);
+  const s=surveyStats(r);
+  showTab(id,(s.complete||hasInstallData(r))?'install':'survey');
+  r.panel.scrollIntoView({behavior:'smooth',block:'start'});
+  r.panel.classList.add('flash');
+  setTimeout(()=>r.panel.classList.remove('flash'),1500);
+}
+
+// A small cropped snippet of the drawing around each pin, used in the "View Pins" list and on the printout.
+function getDrawingImg(drawingId){
+  if(drawingImgCache.has(drawingId))return drawingImgCache.get(drawingId);
+  const d=drawings.get(drawingId);if(!d)return null;
+  const img=new Image();
+  img.onload=()=>{rows.forEach((r,id)=>{if(r.pin?.drawingId===drawingId)refreshPinCrop(id);});};
+  img.src=d.data;
+  drawingImgCache.set(drawingId,img);
+  return img;
+}
+function refreshPinCrop(id){
+  const r=rows.get(id);if(!r||!r.pin)return;
+  const img=getDrawingImg(r.pin.drawingId);
+  if(!img||!img.complete||!img.naturalWidth)return;
+  const cw=img.naturalWidth,ch=img.naturalHeight;
+  const size=Math.min(cw,ch)*0.22;
+  let sx=(r.pin.xPct/100)*cw-size/2,sy=(r.pin.yPct/100)*ch-size/2;
+  sx=Math.max(0,Math.min(cw-size,sx));sy=Math.max(0,Math.min(ch-size,sy));
+  const cv=document.createElement('canvas');cv.width=360;cv.height=360;
+  const ctx=cv.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,360,360);
+  ctx.drawImage(img,sx,sy,size,size,0,0,360,360);
+  const color={amber:'#E5A80F',blue:'#1e40af',green:'#2e7d32'}[doorStatusColor(r)];
+  ctx.beginPath();ctx.arc(180,180,22,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();ctx.lineWidth=3;ctx.strokeStyle='#fff';ctx.stroke();
+  ctx.fillStyle='#fff';ctx.font='bold 18px Arial';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText((r.f.ref.value||'').replace(/^FD-0*/i,''),180,181);
+  r.pin.cropData=cv.toDataURL('image/jpeg',0.75);
+}
+
+onSnapshot(query(drawingsCol,orderBy('order')),{includeMetadataChanges:true},snap=>{
+  drawings.clear();
+  snap.docs.forEach(d=>drawings.set(d.id,{id:d.id,...d.data()}));
+  if(activeDrawingId&&!drawings.has(activeDrawingId))activeDrawingId=null;
+  if(!activeDrawingId&&drawings.size)activeDrawingId=[...drawings.keys()].sort((a,b)=>(drawings.get(a).order??0)-(drawings.get(b).order??0))[0];
+  renderDrawingTabs();
+  renderDrawingView();
+  rows.forEach((r,id)=>{if(r.pin)refreshPinCrop(id);});
+},err=>{
+  console.error(err);
+  showToast('Could not load drawings — check your connection and Firebase setup','error');
+});
+
+// ─── PRINT ────────────────────────────────────────────────────────────────────
+// Built fresh from the current values each time, then removed again after printing.
+function fmtDate(v){
+  const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(v||'');
+  return m?`${m[3]}/${m[2]}/${m[1]}`:(v||'');
+}
+const g=(r,k)=>{const v=r.f[k].value;return v===DOOR_DEFAULTS[k]?'':v;};
+const locText=r=>[g(r,'loc'),g(r,'locFree')].filter(Boolean).join(' — ');
+const byText=r=>[g(r,'init'),g(r,'initFree')].filter(Boolean).join(' / ');
+const sv=(r,k)=>clean(r.pre[k]);
+const orderedRows=()=>[...doorList.children].map(p=>rows.get(p.dataset.id));
+
+function aspectDetail(r,a){
+  const parts=a.fields.filter(f=>!(f.onlyIfConcern&&!needsReport(r))).map(f=>{
+    const v=sv(r,f.k);
+    const unit=f.num&&v?' mm':'';
+    return `${esc(f.label)}${/\?$/.test(f.label)?'':':'} ${v?`<b>${esc(v)}${unit}</b>`:'<span class="miss">not completed</span>'}`;
+  });
+  const n=r.pre['n_'+a.id].value.trim();
+  if(n)parts.push(`<i>Notes: ${esc(n)}</i>`);
+  return parts.join('<br>');
+}
+
+function buildRiaTable(){
+  const head=['#','Fire Door Ref','Location of Installed Fire Door','Installer Declared Fire Resistance','Installation Completion Date','Installed by (initials)','Q-Mark Manufacturer Plug Present (state colours)','Installer Plug / Label Fitted (state marking)','Fire Door Supporting Documentation Used','Fire Stopping Supporting Documentation Used','Comments'];
+  let h='<table class="door-table"><thead><tr>'+head.map(t=>`<th>${t}</th>`).join('')+'<th></th></tr></thead><tbody>';
+  orderedRows().forEach((r,i)=>{
+    const cells=[i+1,r.f.ref.value,locText(r),g(r,'fp'),fmtDate(g(r,'date')),byText(r),g(r,'plugMfr'),g(r,'plugInst'),g(r,'doorDoc'),g(r,'fsDoc'),r.f.comments.value];
+    h+='<tr>'+cells.map(c=>`<td><span class="print-val">${dash(c)}</span></td>`).join('')+'<td></td></tr>';
+  });
+  return h+'</tbody></table>';
+}
+
+function thumbsHtml(r,slot,cls=''){
+  return r.photos.filter(p=>p.slot===slot).map(p=>`<img class="pk-thumb ${cls}" src="${p.data}" alt="">`).join('');
+}
+
+function pinLocationBlock(r){
+  if(!r.pin)return '';
+  const drawing=drawings.get(r.pin.drawingId);
+  const img=r.pin.cropData?`<img src="${r.pin.cropData}" alt="">`:'<div class="pk-loc-noimg">Drawing not available</div>';
+  return `<div class="pk-loc">${img}<div><small>Location on drawing</small><b>${dash(drawing?.label)} — Pin ${dash(r.f.ref.value)}</b></div></div>`;
+}
+function buildPack(r,i){
+  const ria=$('riaRef').value,proj=$('projRef').value;
+  const s=surveyStats(r);
+  let h=`<section class="pack">
+    <div class="pk-head"><img src="assets/logo-dark-print.png" alt="PML">
+      <div><div class="pk-eyebrow">Q-Mark Fire Door Installation Scheme</div><div class="pk-title">Door ${esc(r.f.ref.value||i+1)} — Complete record</div></div>
+      <div class="pk-refs"><div><span>RIA ref</span><b>${dash(ria)}</b></div><div><span>Location</span><b>${dash(locText(r))}</b></div></div></div>
+    ${pinLocationBlock(r)}
+
+    <div class="pk-h">1 · Pre-installation survey <em>${s.complete?'Complete':'Incomplete'}</em></div>
+    <table class="pt">
+     <tr><td class="lbl">Company name</td><td colspan="3">Planning Manager LTD (PML Fire Protection)</td></tr>
+     <tr><td class="lbl">Client details &amp; site address</td><td colspan="3">${dash($('siteAddress').value.replace(/\s*\n\s*/g,', '))}</td></tr>
+     <tr><td class="lbl">RIA register reference number</td><td>${dash(ria)}</td><td class="lbl">Surveying approved person / operative initials</td><td>${miss(sv(r,'init'))}</td></tr>
+     <tr><td class="lbl">Date of survey</td><td>${miss(fmtDate(sv(r,'date')))}</td><td class="lbl">Surveyor signature</td><td>${miss(sv(r,'sig'))}</td></tr>
+     <tr><td class="lbl">Fire door reference</td><td>${dash(r.f.ref.value)}</td><td class="lbl">Client specified fire resistance</td><td>${miss(sv(r,'res'))}</td></tr>
+    </table>
+    <table class="pt"><thead><tr><th>Area</th><th>Aspect</th><th>Details</th><th class="c">Photo</th></tr></thead><tbody>`;
+  let lastArea='';
+  ASPECTS.forEach(a=>{
+    const span=ASPECTS.filter(x=>x.area===a.area).length,n=photoCount(r,'pre_'+a.id);
+    h+='<tr>'+(a.area!==lastArea?`<td class="area" rowspan="${span}">${a.area}</td>`:'')+`<td class="aspect">${a.name}</td><td>${aspectDetail(r,a)}</td><td class="c">${n?`<span class="tick">✓</span> (${n})`:'<span class="miss">—</span>'}</td></tr>`;
+    lastArea=a.area;
+  });
+  h+='</tbody></table>';
+  const sp=ASPECTS.filter(a=>photoCount(r,'pre_'+a.id));
+  if(sp.length)h+='<div class="pk-phs">'+sp.map(a=>`<div><small>${a.name}</small><span>${thumbsHtml(r,'pre_'+a.id,'sm')}</span></div>`).join('')+'</div>';
+
+  h+=`<div class="pk-h">2 · Installation record</div>
+    <table class="pt">
+     <tr><td class="lbl">Installer declared fire resistance</td><td>${miss(g(r,'fp'))}</td><td class="lbl">Installation completion date</td><td>${miss(fmtDate(g(r,'date')))}</td></tr>
+     <tr><td class="lbl">Installed by (initials)</td><td>${miss(byText(r))}</td><td class="lbl">Q-Mark manufacturer plug present</td><td>${miss(g(r,'plugMfr'))}</td></tr>
+     <tr><td class="lbl">Installer plug / label fitted</td><td>${miss(g(r,'plugInst'))}</td><td class="lbl">Fire door supporting documentation</td><td>${miss(g(r,'doorDoc'))}</td></tr>
+     <tr><td class="lbl">Fire stopping supporting documentation</td><td>${miss(g(r,'fsDoc'))}</td><td class="lbl">Comments</td><td>${dash(r.f.comments.value)}</td></tr>
+    </table>`;
+  const ip=PHOTO_SLOTS.filter(p=>photoCount(r,p.key));
+  if(ip.length){
+    h+='<div class="pk-h">3 · Installation photographs</div><div class="pk-phs">'+ip.map(p=>`<div><small>${p.label}</small><span>${thumbsHtml(r,p.key)}</span></div>`).join('')+'</div>';
+  }
+  return h+'</section>';
+}
+
+function preparePrint(){
+  cleanupPrint();
+  document.querySelectorAll('.job-card .field').forEach(f=>{
+    const c=f.querySelector('input,select,textarea');
+    if(!c)return;
+    const pv=document.createElement('div');
+    pv.className='print-val';
+    pv.textContent=(c.type==='date'?fmtDate(c.value):c.value)||'—';
+    f.appendChild(pv);
+  });
+  $('phRia').textContent=$('riaRef').value||'—';
+  $('phProj').textContent=$('projRef').value||'—';
+  // The footer lives in the page margin (a fixed element drifts to the top of pages when paginated).
+  const st=document.createElement('style');st.id='printPageStyle';
+  st.textContent=`@page{@bottom-left{content:"Planning Manager Ltd t/a PML Fire Protection  ·  Q-Mark Certificate 4322  ·  Printed ${new Date().toLocaleDateString('en-GB')}";font-family:'DM Sans',Arial,sans-serif;font-size:7pt;color:#555}}`;
+  document.head.appendChild(st);
+  $('printRia').innerHTML=buildRiaTable();
+  $('printPacks').innerHTML=orderedRows().map(buildPack).join('');
+}
+function cleanupPrint(){
+  document.querySelectorAll('.print-val').forEach(el=>el.remove());
+  $('printRia').innerHTML='';$('printPacks').innerHTML='';
+  $('printPageStyle')?.remove();
+}
+window.addEventListener('beforeprint',preparePrint);
+window.addEventListener('afterprint',cleanupPrint);
+
+// ─── LIVE LISTENERS (start once signed in) ────────────────────────────────────
+let started=false;
+function startListeners(){
+  if(started)return;
+  started=true;
+
+  onSnapshot(jobRef,{includeMetadataChanges:true},snap=>{
+    setPending('job',snap.metadata.hasPendingWrites);
+    if(!snap.exists()){
+      if(!snap.metadata.fromCache){showToast('That job no longer exists','error');setTimeout(()=>location.replace('jobs.html'),1500);}
+      return;
+    }
+    const d=snap.data();
+    JOB_FIELDS.forEach(id=>{
+      const el=$(id);
+      if(el===document.activeElement||id in jobPending)return;
+      const v=d[id]??'';
+      if(el.value!==v)el.value=v;
+    });
+    const label=[d.riaRef,d.projRef].filter(Boolean).join(' — ');
+    $('topbarJob').textContent=label||'Record of Installation Activities';
+    $('heroTitle').textContent=label||'New job';
+    $('heroAddr').textContent=d.siteAddress||'';
+    document.title=label?`${label} — RIA`:'PML Fire Protection — RIA';
+  },err=>{
+    console.error(err);
+    showToast('Could not load job — check your connection and Firebase setup','error');
+  });
+
+  onSnapshot(query(doorsCol,orderBy('order')),{includeMetadataChanges:true},snap=>{
+    setPending('doors',snap.metadata.hasPendingWrites);
+    snap.docChanges().forEach(ch=>{
+      const id=ch.doc.id;
+      if(ch.type==='added'){
+        buildDoor(id,ch.newIndex);
+        applyDoorData(id,ch.doc.data());
+        if(pendingFocusDoorId===id){pendingFocusDoorId=null;goToDoor(id);}
+      }else if(ch.type==='modified'){
+        applyDoorData(id,ch.doc.data());
+      }else if(ch.type==='removed'){
+        const r=rows.get(id);
+        if(r){r.unsub?.();r.panel.remove();rows.delete(id);pendingSources.delete('photos-'+id);}
+      }
+    });
+    renumber();
+    updateStatus();
+  },err=>{
+    console.error(err);
+    showToast('Could not load doors — check your connection and Firebase setup','error');
+  });
+}
+
+onAuthStateChanged(auth,user=>{
+  if(!user){location.replace('index.html');return;}
+  startListeners();
+});
+</script>
+</body>
+</html>

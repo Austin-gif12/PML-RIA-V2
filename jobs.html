@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PML RIA">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0E0602">
+<link rel="icon" href="assets/icon-180.png">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<title>PML Fire Protection — Jobs</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+  .eyebrow{font-family:var(--ffh);font-size:10.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--yellow-deep)}
+  .page-head h1{font-family:var(--ffh);font-size:28px;font-weight:800;letter-spacing:-.3px;margin-top:2px}
+  .page-head p{color:var(--muted);font-size:13px;margin-top:2px}
+  .search{max-width:280px;width:100%;position:relative}
+  .search input{padding-left:38px;font-size:15px}
+  .search::before{content:'';position:absolute;left:13px;top:50%;width:14px;height:14px;transform:translateY(-50%);background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236f675e' stroke-width='2.4' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3.5-3.5'/%3E%3C/svg%3E") no-repeat center/contain;pointer-events:none}
+
+  .tabs{display:flex;gap:6px;background:#fff;border:1px solid var(--border);border-radius:14px;padding:5px;margin-bottom:16px;box-shadow:var(--shadow);overflow-x:auto}
+  .tab{flex:1;min-width:max-content;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border:none;border-radius:10px;background:transparent;font-family:var(--ffh);font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;min-height:44px;-webkit-tap-highlight-color:transparent}
+  .tab .count{background:#eee9df;color:var(--muted);border-radius:20px;padding:1px 8px;font-size:11px}
+  .tab.active{background:var(--black);color:#fff}
+  .tab.active .count{background:var(--yellow);color:var(--black)}
+
+  .job-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+  .job-item{background:#fff;border:1px solid var(--border);border-left:5px solid var(--yellow);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:box-shadow .15s,transform .1s,border-color .15s;box-shadow:var(--shadow)}
+  .job-item:hover{box-shadow:0 2px 4px rgba(14,6,2,.08),0 12px 28px rgba(14,6,2,.12);transform:translateY(-2px);border-left-color:var(--black)}
+  .job-item.completed{border-left-color:#2e7d32}
+  .job-item.deleted{border-left-color:#b3261e;cursor:default;background:#fcf8f7}
+  .job-item.deleted:hover{transform:none;box-shadow:var(--shadow);border-left-color:#b3261e}
+  .job-ref{font-family:var(--ffh);font-weight:800;font-size:15px}
+  .job-ref small{font-weight:600;color:var(--muted);font-size:12px;margin-left:6px}
+  .job-item .addr{font-size:13px;color:#4b433b;line-height:1.45;white-space:pre-line;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .job-item .meta{font-size:11.5px;color:var(--muted)}
+  .job-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:4px;border-top:1px solid #f0ebe1}
+  .act{flex:1 1 auto;min-height:38px;padding:7px 12px;border-radius:9px;border:1.5px solid var(--border);background:#fff;font-family:var(--ffh);font-size:12px;font-weight:700;color:var(--ink);cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .act:hover{border-color:var(--black)}
+  .act.primary{background:var(--yellow);border-color:var(--yellow);color:var(--black)}
+  .act.primary:hover{background:var(--yellow-deep);border-color:var(--yellow-deep)}
+  .act.danger{color:#b3261e}
+  .act.danger:hover{border-color:#b3261e;background:var(--red-bg)}
+  .act.solid-danger{background:#b3261e;border-color:#b3261e;color:#fff}
+  .act.solid-danger:hover{background:#8f1f18}
+
+  .new-job-form{display:none;background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden}
+  .new-job-form.open{display:block}
+  .empty-state{grid-column:1/-1;color:var(--muted);font-size:14px;text-align:center;padding:44px 10px;background:#fff;border:1.5px dashed var(--border);border-radius:12px}
+  .bin-note{background:var(--wbg);border:1px solid #fde68a;color:var(--warn);border-radius:12px;padding:10px 14px;font-size:12.5px;margin-bottom:14px}
+
+  .modal{position:fixed;inset:0;background:rgba(14,6,2,.55);display:none;align-items:center;justify-content:center;z-index:9999;padding:16px}
+  .modal.open{display:flex}
+  .sheet{background:#fff;border-radius:18px;padding:22px 22px 18px;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.4);border-top:5px solid #b3261e}
+  .sheet h3{font-family:var(--ffh);font-size:17px;font-weight:800;margin-bottom:6px}
+  .sheet p{font-size:13.5px;color:#4b433b;line-height:1.5;margin-bottom:18px}
+  .sheet .row{display:flex;gap:10px}
+  .sheet .row .btn{flex:1}
+  .btn-danger{background:#b3261e;color:#fff}
+  .btn-danger:hover{background:#8f1f18}
+  @media(max-width:700px){.modal{align-items:flex-end}.sheet{border-radius:18px 18px 0 0;max-width:none;padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <a class="brand" href="jobs.html"><img src="assets/logo-light.png" alt="PML"><span class="brand-sub">Fire<br>Protection</span></a>
+  </div>
+  <div class="topbar-actions">
+    <span id="userEmail" style="color:#a39a8f;font-size:12px"></span>
+    <button class="btn btn-ghost btn-sm" id="signOutBtn">Sign Out</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="page-head">
+    <div>
+      <div class="eyebrow">Q-Mark Fire Door Installation Scheme</div>
+      <h1>Jobs</h1>
+      <p id="jobCount">Loading…</p>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;flex:1;justify-content:flex-end">
+      <div class="search"><input type="text" id="searchBox" placeholder="Search jobs…" autocomplete="off"></div>
+      <button class="btn btn-blue" id="newJobBtn">＋ New Job</button>
+    </div>
+  </div>
+
+  <div class="status-bar online" id="statusBar">
+    <div class="status-dot"></div>
+    <span id="statusText">Checking connection…</span>
+  </div>
+
+  <div class="new-job-form" id="newJobForm">
+    <div class="card-header"><h2>New job</h2></div>
+    <div class="card-body">
+      <div class="form-grid">
+        <div class="field">
+          <label>RIA Register Reference Number <span class="req">*</span></label>
+          <input type="text" id="njRiaRef" placeholder="e.g. RIA-2024-001">
+        </div>
+        <div class="field">
+          <label>Internal Installation Project Reference</label>
+          <input type="text" id="njProjRef" placeholder="e.g. PML-2024-052">
+        </div>
+        <div class="field full">
+          <label>Client Name &amp; Site Address <span class="req">*</span></label>
+          <textarea id="njSiteAddress" rows="2" placeholder="Client name, building name, street, town, postcode"></textarea>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:14px">
+        <button class="btn btn-blue" id="createJobBtn">Create Job</button>
+        <button class="btn btn-outline" id="cancelJobBtn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-view="active">In Progress <span class="count" id="cntActive">0</span></button>
+    <button class="tab" data-view="completed">Completed <span class="count" id="cntCompleted">0</span></button>
+    <button class="tab" data-view="deleted">Deleted <span class="count" id="cntDeleted">0</span></button>
+  </div>
+
+  <div class="bin-note" id="binNote" style="display:none">
+    Deleted jobs are kept here so you can restore them. <b>Delete forever</b> removes a job, its doors and its photos permanently.
+  </div>
+
+  <div class="job-list" id="jobList">
+    <div class="empty-state">Loading jobs…</div>
+  </div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="sheet">
+    <h3 id="mTitle"></h3>
+    <p id="mText"></p>
+    <div class="row">
+      <button class="btn btn-outline" id="mCancel">Cancel</button>
+      <button class="btn btn-danger" id="mOk">Delete forever</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { auth, db } from "./firebase-init.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+import {
+  collection, doc, query, orderBy, onSnapshot, addDoc, updateDoc, deleteDoc, getDocs, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+const jobList = document.getElementById('jobList');
+const statusBar = document.getElementById('statusBar');
+const statusText = document.getElementById('statusText');
+const newJobForm = document.getElementById('newJobForm');
+const searchBox = document.getElementById('searchBox');
+
+const VIEWS = {
+  active:    { label: 'In Progress', empty: 'No jobs in progress — tap "＋ New Job" to create one.' },
+  completed: { label: 'Completed',   empty: 'No completed jobs yet. Use "Mark complete" on a job when it is finished.' },
+  deleted:   { label: 'Deleted',     empty: 'Nothing in Deleted.' },
+};
+let view = 'active';
+const statusOf = j => j.status || 'active';
+
+let tt;
+function showToast(msg, type='success'){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = `toast ${type} show`;
+  clearTimeout(tt); tt = setTimeout(()=> t.className = 'toast', 3200);
+}
+
+let fromCache = true;
+let slowConnect = false;
+setTimeout(()=>{ slowConnect = true; updateOnlineStatus(); if(fromCache) renderJobs(); }, 12000);
+
+function updateOnlineStatus(){
+  const online = navigator.onLine;
+  let cls = 'online', msg = 'Online — jobs sync live across every device';
+  if(!online){
+    cls = 'offline';
+    msg = 'Offline — you can still open and edit jobs; changes sync once you\'re back online';
+  }else if(fromCache && slowConnect){
+    cls = 'offline';
+    msg = 'Can\'t reach the server — showing the copy saved on this device. Check your signal or wifi, and turn off any VPN, ad-blocker or Private Browsing.';
+  }else if(fromCache){
+    cls = 'offline';
+    msg = 'Connecting to the server…';
+  }
+  statusBar.className = 'status-bar ' + cls;
+  statusText.textContent = msg;
+}
+window.addEventListener('online', updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
+updateOnlineStatus();
+
+document.getElementById('signOutBtn').addEventListener('click', ()=> signOut(auth));
+
+onAuthStateChanged(auth, user=>{
+  if(!user){ window.location.href = 'index.html'; return; }
+  document.getElementById('userEmail').textContent = user.email;
+});
+
+document.getElementById('newJobBtn').addEventListener('click', ()=>{
+  newJobForm.classList.add('open');
+  document.getElementById('njRiaRef').focus();
+});
+document.getElementById('cancelJobBtn').addEventListener('click', ()=>{
+  newJobForm.classList.remove('open');
+});
+
+document.getElementById('createJobBtn').addEventListener('click', async ()=>{
+  const riaRef = document.getElementById('njRiaRef').value.trim();
+  const projRef = document.getElementById('njProjRef').value.trim();
+  const siteAddress = document.getElementById('njSiteAddress').value.trim();
+  if(!riaRef || !siteAddress){
+    showToast('RIA Reference and Site Address are required', 'error');
+    return;
+  }
+  const btn = document.getElementById('createJobBtn');
+  btn.disabled = true;
+  try{
+    const docRef = await addDoc(collection(db, 'jobs'), {
+      riaRef, projRef, siteAddress,
+      status: 'active',
+      companyName: 'Planning Manager LTD (PML Fire Protection)',
+      certNum: '4322',
+      approvedPerson: '', approvedNum: '', sigName: '', sigDate: '',
+      createdBy: auth.currentUser?.email || '',
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    });
+    window.location.href = `ria.html?job=${docRef.id}`;
+  }catch(err){
+    showToast('Could not create job: ' + err.message, 'error');
+    btn.disabled = false;
+  }
+});
+
+// ─── Confirm sheet ───────────────────────────────────────────────────────────
+function askConfirm(title, text, okLabel){
+  return new Promise(resolve=>{
+    const modal = document.getElementById('modal');
+    document.getElementById('mTitle').textContent = title;
+    document.getElementById('mText').textContent = text;
+    const ok = document.getElementById('mOk'), cancel = document.getElementById('mCancel');
+    ok.textContent = okLabel;
+    const done = v=>{ modal.classList.remove('open'); ok.onclick = cancel.onclick = modal.onclick = null; resolve(v); };
+    ok.onclick = ()=> done(true);
+    cancel.onclick = ()=> done(false);
+    modal.onclick = e=>{ if(e.target === modal) done(false); };
+    modal.classList.add('open');
+  });
+}
+
+// ─── Job actions ─────────────────────────────────────────────────────────────
+// These don't await the server: offline, the local list updates at once and the change syncs later.
+function setStatus(j, status, toast){
+  const data = { status, updatedAt: serverTimestamp() };
+  if(status === 'completed') data.completedAt = serverTimestamp();
+  if(status === 'deleted') data.deletedAt = serverTimestamp();
+  updateDoc(doc(db, 'jobs', j.id), data).catch(err=> showToast('Could not update job: ' + err.message, 'error'));
+  showToast(toast);
+}
+
+async function deleteForever(j){
+  const name = j.riaRef || 'this job';
+  const ok = await askConfirm(
+    'Delete forever?',
+    `${name} and all of its doors and photos will be permanently removed for everyone. This cannot be undone.`,
+    'Delete forever'
+  );
+  if(!ok) return;
+  try{
+    const doors = await getDocs(collection(db, 'jobs', j.id, 'doors'));
+    const pending = [];
+    for(const d of doors.docs){
+      const photos = await getDocs(collection(d.ref, 'photos'));
+      photos.docs.forEach(p => pending.push(deleteDoc(p.ref)));
+      pending.push(deleteDoc(d.ref));
+    }
+    pending.push(deleteDoc(doc(db, 'jobs', j.id)));
+    Promise.all(pending).catch(err=> showToast('Delete failed: ' + err.message, 'error'));
+    showToast('Job deleted permanently');
+  }catch(err){
+    showToast('Delete failed: ' + err.message, 'error');
+  }
+}
+
+// ─── Rendering ───────────────────────────────────────────────────────────────
+let jobs = [];
+
+function fmt(ts){
+  return ts?.toDate ? ts.toDate().toLocaleString('en-GB', {dateStyle:'medium', timeStyle:'short'}) : 'just now';
+}
+function escapeHtml(s){
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+function mkAct(label, cls, fn){
+  const b = document.createElement('button');
+  b.className = 'act ' + cls; b.textContent = label;
+  b.addEventListener('click', e=>{ e.stopPropagation(); fn(); });
+  return b;
+}
+
+function renderJobs(){
+  ['active','completed','deleted'].forEach(v=>{
+    document.getElementById('cnt' + v[0].toUpperCase() + v.slice(1)).textContent = jobs.filter(j=> statusOf(j) === v).length;
+  });
+  document.querySelectorAll('.tab').forEach(t=> t.classList.toggle('active', t.dataset.view === view));
+  document.getElementById('binNote').style.display = view === 'deleted' ? 'block' : 'none';
+
+  const inView = jobs.filter(j=> statusOf(j) === view);
+  const term = searchBox.value.trim().toLowerCase();
+  const shown = term
+    ? inView.filter(j => [j.riaRef, j.projRef, j.siteAddress].join(' ').toLowerCase().includes(term))
+    : inView;
+  document.getElementById('jobCount').textContent =
+    `${inView.length} ${VIEWS[view].label.toLowerCase()}` + (term ? ` · ${shown.length} match${shown.length === 1 ? '' : 'es'}` : '');
+
+  if(!shown.length){
+    const msg = inView.length ? 'No jobs match your search.'
+      : (view === 'active' && jobs.length === 0 && fromCache)
+        ? (slowConnect ? 'Still can\'t reach the server, so jobs from other devices can\'t load yet.' : 'Connecting to the server…')
+        : VIEWS[view].empty;
+    jobList.innerHTML = `<div class="empty-state">${msg}</div>`;
+    return;
+  }
+
+  jobList.innerHTML = '';
+  shown.forEach(j=>{
+    const row = document.createElement('div');
+    row.className = 'job-item ' + view;
+    const when = view === 'completed' ? 'Completed ' + fmt(j.completedAt || j.updatedAt)
+               : view === 'deleted'   ? 'Deleted ' + fmt(j.deletedAt || j.updatedAt)
+               : 'Updated ' + fmt(j.updatedAt);
+    row.innerHTML = `
+      <div class="job-ref">${escapeHtml(j.riaRef || '(no ref)')}${j.projRef ? `<small>${escapeHtml(j.projRef)}</small>` : ''}</div>
+      <div class="addr">${escapeHtml(j.siteAddress || '')}</div>
+      <div class="meta">${j.pending ? '⏳ Not uploaded yet — other devices can\'t see this' : when}</div>
+    `;
+    const actions = document.createElement('div');
+    actions.className = 'job-actions';
+    if(view === 'active'){
+      actions.append(
+        mkAct('Open', 'primary', ()=> window.location.href = `ria.html?job=${j.id}`),
+        mkAct('Mark complete', '', ()=> setStatus(j, 'completed', 'Moved to Completed')),
+        mkAct('Delete', 'danger', ()=> setStatus(j, 'deleted', 'Moved to Deleted'))
+      );
+    }else if(view === 'completed'){
+      actions.append(
+        mkAct('Open', 'primary', ()=> window.location.href = `ria.html?job=${j.id}`),
+        mkAct('Reopen', '', ()=> setStatus(j, 'active', 'Moved back to In Progress')),
+        mkAct('Delete', 'danger', ()=> setStatus(j, 'deleted', 'Moved to Deleted'))
+      );
+    }else{
+      actions.append(
+        mkAct('Restore', 'primary', ()=> setStatus(j, 'active', 'Restored to In Progress')),
+        mkAct('Delete forever', 'solid-danger', ()=> deleteForever(j))
+      );
+    }
+    row.appendChild(actions);
+    if(view !== 'deleted') row.addEventListener('click', ()=> window.location.href = `ria.html?job=${j.id}`);
+    jobList.appendChild(row);
+  });
+}
+
+searchBox.addEventListener('input', renderJobs);
+document.getElementById('tabs').addEventListener('click', e=>{
+  const t = e.target.closest('.tab');
+  if(!t) return;
+  view = t.dataset.view;
+  renderJobs();
+});
+
+const q = query(collection(db, 'jobs'), orderBy('updatedAt', 'desc'));
+onSnapshot(q, { includeMetadataChanges: true }, snap=>{
+  jobs = snap.docs.map(d => ({ id: d.id, pending: d.metadata.hasPendingWrites, ...d.data() }));
+  fromCache = snap.metadata.fromCache;
+  updateOnlineStatus();
+  renderJobs();
+}, err=>{
+  const denied = err.code === 'permission-denied';
+  jobList.innerHTML = `<div class="empty-state">${denied
+    ? 'This account isn\'t allowed to read jobs. Check the Firestore rules have been published (see README).'
+    : 'Could not load jobs: ' + escapeHtml(err.message)}</div>`;
+  console.error(err);
+});
+</script>
+</body>
+</html>
