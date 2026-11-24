@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PML Fire Protection — Fire Stopping Training Records</title>
+<link rel="icon" href="assets/icon-180.png">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ff:'DM Sans','Segoe UI',Tahoma,sans-serif;--ffh:'Montserrat','DM Sans','Segoe UI',sans-serif;--ffm:'DM Mono','Courier New',monospace;
+  --black:#0E0602;--black2:#1d1510;--yellow:#FCBF2A;--yellow-deep:#E5A80F;--yellow-soft:#FFF6DC;
+  --bg:#F5F3EE;--card:#fff;--ink:#1c1410;--muted:#6f675e;--border:#e4dfd5;--tint:#faf8f4;
+  --red:#C0392B;--red-bg:#fee2e2;--green:#166534;--gbg:#dcfce7;--warn:#92400e;--wbg:#fef3c7;
+  --blue:#1e40af;--bbg:#e0e7ff;
+  --radius:14px;--shadow:0 1px 2px rgba(14,6,2,.06),0 6px 20px rgba(14,6,2,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--ff);background:var(--bg);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;font-size:14px;line-height:1.5}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:inherit}
+/* top bar */
+.topbar{background:var(--black);padding:12px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:15;border-bottom:3px solid var(--yellow);box-shadow:0 4px 18px rgba(14,6,2,.35);flex-wrap:wrap;gap:10px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img{height:26px;width:auto;display:block}
+.brand-sub{font-family:var(--ffh);font-weight:700;font-size:10.5px;letter-spacing:2.2px;text-transform:uppercase;color:var(--yellow);border-left:1px solid #4a3f36;padding-left:12px;line-height:1.2}
+.topbar-title{color:#f3efe8;font-size:13px;font-weight:500;margin-left:6px}
+.topbar-title span{color:#a39a8f}
+.scheme{display:flex;background:#1d1510;border:1px solid #4a3f36;border-radius:11px;padding:3px;gap:3px}
+.scheme a{background:none;border:0;border-radius:8px;color:#c9c0b4;font-family:var(--ffh);font-size:11.5px;font-weight:700;padding:8px 13px;display:flex;align-items:center;min-height:36px;text-decoration:none}.scheme a.on{background:var(--yellow);color:var(--black)}.scheme a:not(.on):hover{color:#fff}
+.scheme button{background:none;border:0;border-radius:8px;color:#c9c0b4;font-family:var(--ffh);font-size:11.5px;font-weight:700;padding:8px 13px;cursor:pointer;display:flex;align-items:center;gap:7px;min-height:36px}
+.scheme button.on{background:var(--yellow);color:var(--black)}
+.scheme .next{font-size:9px;letter-spacing:.8px;text-transform:uppercase;background:rgba(252,191,42,.16);color:var(--yellow);padding:2px 7px;border-radius:20px}
+.main{max-width:1220px;margin:0 auto;padding:24px 18px 70px}
+/* hero */
+.hero{background:var(--black);background-image:radial-gradient(500px 220px at 100% 0%,rgba(252,191,42,.22),transparent 65%);color:#fff;border-radius:var(--radius);padding:22px 24px;margin-bottom:18px;display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap;box-shadow:var(--shadow);border-bottom:4px solid var(--yellow)}
+.hero .eyebrow{font-family:var(--ffh);font-size:10.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--yellow)}
+.hero h1{font-family:var(--ffh);font-size:26px;font-weight:800;letter-spacing:-.3px;margin-top:4px;line-height:1.15}
+.hero p{color:#c9c0b4;font-size:13px;margin-top:6px;max-width:640px;line-height:1.45}
+.hero .ap{color:#c9c0b4;font-size:12.5px;margin-top:10px}
+.hero .ap b{color:#fff;font-weight:600}
+.hchips{display:flex;gap:10px;flex-wrap:wrap}
+.hchip{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:9px 16px;font-size:12px;color:#d8d0c4;text-align:center;min-width:86px}
+.hchip b{display:block;font-family:var(--ffh);font-size:22px;font-weight:800;color:var(--yellow);line-height:1.1}
+/* segmented nav (jobs page style) */
+.seg{display:flex;background:#fff;border:1px solid var(--border);border-radius:14px;padding:5px;gap:4px;box-shadow:var(--shadow);margin-bottom:20px;overflow-x:auto}
+.seg a{flex:1;text-align:center;text-decoration:none;font-family:var(--ffh);font-weight:700;font-size:12.5px;color:var(--muted);padding:11px 12px;border-radius:10px;white-space:nowrap;display:flex;align-items:center;justify-content:center;gap:7px}
+.seg a:hover{background:var(--tint);color:var(--ink)}
+.seg a.on{background:var(--black);color:#fff}
+.seg .n{background:#eee9df;color:var(--muted);font-size:10.5px;padding:1px 7px;border-radius:20px}
+.seg a.on .n{background:var(--yellow);color:var(--black)}
+/* cards */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden}
+.card-header{background:var(--black);color:#fff;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;border-left:5px solid var(--yellow);min-height:54px}
+.card-header h2{font-family:var(--ffh);font-size:12.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tag{background:rgba(252,191,42,.16);color:var(--yellow);padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600;letter-spacing:.6px;font-family:var(--ffh)}
+.card-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.card-body{padding:20px}
+.lead{color:var(--muted);font-size:13px;margin-bottom:14px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:900px){.two{grid-template-columns:1fr}}
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border:none;border-radius:10px;font-family:var(--ffh);font-size:12.5px;font-weight:700;letter-spacing:.2px;cursor:pointer;min-height:40px;text-decoration:none;white-space:nowrap}
+.btn.primary{background:var(--yellow);color:var(--black)}
+.btn.primary:hover{background:var(--yellow-deep)}
+.btn{background:#fff;color:var(--ink);border:1.5px solid var(--border)}
+.btn:hover{border-color:var(--black);background:var(--tint)}
+.btn.primary{border-color:var(--yellow)}
+.btn.ghost{background:transparent;color:#e9e3d9;border:1px solid #4a3f36}
+.btn.ghost:hover{background:#2a201a;color:#fff}
+.btn.small{padding:5px 11px;font-size:11.5px;min-height:32px;border-radius:8px}
+.btn.danger{color:var(--red)}
+.btn.danger:hover{background:var(--red-bg);border-color:var(--red)}
+.infobtn{display:inline-flex;align-items:center;gap:6px;background:var(--yellow-soft);border:1px solid #f3dd9b;color:#5a4a1e;font-family:var(--ffh);font-size:11px;font-weight:700;padding:5px 10px;border-radius:8px;cursor:pointer;white-space:nowrap}
+.infobtn:hover{background:var(--yellow);border-color:var(--yellow);color:var(--black)}
+.infobtn .i{width:16px;height:16px;border-radius:50%;background:var(--black);color:var(--yellow);display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-family:Georgia,serif;font-style:italic;font-weight:700}
+.card-header .infobtn{background:rgba(252,191,42,.14);border-color:rgba(252,191,42,.35);color:var(--yellow)}
+.card-header .infobtn:hover{background:var(--yellow);color:var(--black)}
+.card-header .infobtn .i{background:var(--yellow);color:var(--black)}
+/* tables */
+.tw{overflow-x:auto;border-radius:10px;border:1px solid var(--border)}
+table.grid{width:100%;border-collapse:collapse;font-size:13px}
+table.grid th{background:var(--black);color:#f3efe8;font-family:var(--ffh);font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;padding:11px 9px;border-bottom:3px solid var(--yellow);text-align:left;white-space:nowrap}
+table.grid td{padding:10px 9px;border-bottom:1px solid #eee9df;vertical-align:top}
+table.grid tr:last-child td{border-bottom:none}
+table.grid tr.click:hover td{background:#fffbef;cursor:pointer}
+table.grid.plain th{background:var(--tint);color:var(--muted);border-bottom:1px solid var(--border)}
+.matrix th.t,.matrix td.t{text-align:center;min-width:100px}
+.thbtn{background:none;border:0;color:inherit;font:inherit;letter-spacing:inherit;text-transform:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+.thbtn:hover{color:var(--yellow)}
+.thbtn .q{width:14px;height:14px;border-radius:50%;border:1.5px solid currentColor;display:inline-flex;align-items:center;justify-content:center;font-size:8.5px;opacity:.8}
+/* pills */
+.pill{display:inline-block;font-family:var(--ffh);font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:20px;background:#eee9df;color:var(--muted);white-space:nowrap}
+.pill.ok{background:var(--gbg);color:var(--green)}
+.pill.due{background:var(--wbg);color:var(--warn)}
+.pill.over{background:var(--red-bg);color:var(--red)}
+.pill.tr{background:var(--bbg);color:var(--blue)}
+.pill.plan{background:var(--yellow-soft);color:#7a5a00;border:1px dashed var(--yellow-deep)}
+.pill.ap{background:var(--black);color:var(--yellow)}
+.cellsub{display:block;font-size:11px;color:var(--muted);margin-top:4px;font-family:var(--ffm)}
+.tchips{display:flex;flex-wrap:wrap;gap:4px}
+.tchip{border:0;background:var(--black);color:var(--yellow);font-family:var(--ffm);font-size:11px;font-weight:500;padding:2px 7px;border-radius:6px;cursor:pointer;line-height:1.5}
+.tchip:hover{background:var(--yellow);color:var(--black)}
+.mono{font-family:var(--ffm)}
+.muted{color:var(--muted)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:12px;align-items:center}
+/* alerts */
+.alert{border-radius:10px;padding:11px 14px;margin-bottom:8px;font-size:13px;border:1px solid;border-left-width:4px}
+.alert.warn{background:var(--wbg);border-color:#fde68a;border-left-color:var(--yellow-deep);color:var(--warn)}
+.alert.bad{background:var(--red-bg);border-color:#fecaca;border-left-color:var(--red);color:#7d1a12}
+.alert.info{background:var(--yellow-soft);border-color:#f3dd9b;border-left-color:var(--yellow);color:#5a4a1e}
+.alert.good{background:var(--gbg);border-color:#bbf7d0;border-left-color:var(--green);color:var(--green)}
+/* operatives */
+.oplist{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.opcard{border:1px solid var(--border);border-left:4px solid var(--border);border-radius:12px;padding:14px;background:#fff;cursor:pointer;display:flex;gap:12px;align-items:center}
+.opcard:hover{border-left-color:var(--yellow-deep)}
+.opcard.sel{border-left-color:var(--yellow);box-shadow:0 0 0 3px rgba(252,191,42,.25)}
+.opcard .nm{font-family:var(--ffh);font-weight:700;font-size:14px}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--yellow);color:var(--black);display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;font-family:var(--ffh);flex:none}
+.divider{display:flex;align-items:center;gap:14px;margin:24px 0 12px;color:var(--muted);font-family:var(--ffh);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.logcat{font-family:var(--ffh);font-weight:700;font-size:12.5px}
+.loglist{list-style:none;margin:6px 0 0}
+.loglist li{padding:7px 10px;border-left:3px solid var(--yellow);background:var(--tint);border-radius:0 8px 8px 0;margin-bottom:6px;display:flex;gap:10px;align-items:flex-start}
+.loglist li .x{margin-left:auto;background:none;border:0;color:var(--red);cursor:pointer;font-size:12px}
+.empty{color:var(--muted);font-size:13px;text-align:center;padding:22px;border:1.5px dashed var(--border);border-radius:10px}
+/* forms */
+.f{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.f .full{grid-column:1/-1}
+@media(max-width:700px){.f{grid-template-columns:1fr}.topbar{padding:10px 14px}.brand-sub,.topbar-title{display:none}}
+label.l{display:flex;align-items:center;gap:8px;font-family:var(--ffh);font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px}
+input[type=text],input[type=date],input[type=url],select,textarea{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:14.5px;background:#fff;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--yellow-deep);box-shadow:0 0 0 3px rgba(252,191,42,.3)}
+textarea{resize:vertical;min-height:110px}
+.hint{font-size:11.5px;color:var(--muted);margin-top:4px}
+.taskpick{display:flex;flex-wrap:wrap;gap:6px}
+.taskpick label{border:1.5px solid var(--border);border-radius:9px;padding:6px 10px;cursor:pointer;font-size:12.5px;display:flex;gap:6px;align-items:center;background:#fff;font-family:var(--ffh);font-weight:600}
+.taskpick label.on{border-color:var(--black);background:var(--black);color:var(--yellow)}
+.taskpick input{margin:0;accent-color:var(--yellow)}
+.tsum{margin-top:8px;display:grid;gap:5px}
+.tsum div{font-size:12.5px;background:var(--yellow-soft);border-left:3px solid var(--yellow);padding:6px 10px;border-radius:0 8px 8px 0;color:#5a4a1e}
+.tsum b{font-family:var(--ffh)}
+.checklist{border:1.5px solid var(--border);border-radius:10px;max-height:230px;overflow:auto}
+.checklist .it{display:flex;gap:10px;align-items:center;padding:8px 11px;border-bottom:1px solid #eee9df;font-size:13px}
+.checklist .it:last-child{border-bottom:0}
+.checklist .grp{background:var(--black);color:var(--yellow);font-family:var(--ffh);font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;position:sticky;top:0}
+.checklist input{accent-color:var(--yellow-deep)}
+.att{display:grid;grid-template-columns:24px 1fr 70px 150px 110px;gap:8px;align-items:center;padding:8px 11px;border-bottom:1px solid #eee9df;font-size:13px}
+.att:last-child{border-bottom:0}
+.att.head{font-family:var(--ffh);font-size:9.5px;font-weight:700;color:var(--muted);text-transform:uppercase;background:var(--tint);letter-spacing:.6px}
+.att input[type=text],.att input[type=date]{padding:6px 8px;font-size:13px}
+/* modal */
+.modal-bg{position:fixed;inset:0;background:rgba(14,6,2,.55);display:none;align-items:flex-start;justify-content:center;padding:30px 14px;z-index:20;overflow-y:auto}
+.modal-bg.show{display:flex}
+.modal{background:#fff;border-radius:var(--radius);max-width:880px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.35);overflow:hidden}
+.modal.wide{max-width:1080px}
+.modal>header{background:var(--black);color:#fff;padding:14px 20px;display:flex;align-items:center;gap:10px;border-left:5px solid var(--yellow)}
+.modal>header h3{font-family:var(--ffh);font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.modal .body{padding:20px}
+.modal>footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;background:var(--tint)}
+.spacer{flex:1}
+.xbtn{background:transparent;border:1px solid #4a3f36;color:#e9e3d9;border-radius:8px;width:34px;height:34px;cursor:pointer}
+/* task description viewer */
+.tview{display:grid;grid-template-columns:270px 1fr;min-height:480px}
+@media(max-width:760px){.tview{grid-template-columns:1fr}}
+.tnav{background:var(--tint);border-right:1px solid var(--border);padding:10px}
+.tnav button{display:flex;width:100%;text-align:left;gap:10px;align-items:center;background:none;border:0;border-radius:10px;padding:10px;cursor:pointer;font-size:13px}
+.tnav button:hover{background:#fff}
+.tnav button.on{background:var(--black);color:#fff}
+.tnav .num{width:26px;height:26px;border-radius:50%;background:var(--yellow);color:var(--black);font-family:var(--ffh);font-weight:800;font-size:11px;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.tnav .cd{font-family:var(--ffm);font-size:11px;color:var(--muted);display:block}
+.tnav button.on .cd{color:var(--yellow)}
+.tdetail{padding:22px 26px;max-height:72vh;overflow:auto}
+.tdetail .eyebrow{font-family:var(--ffh);font-size:10.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--yellow-deep)}
+.tdetail h4{font-family:var(--ffh);font-size:22px;font-weight:800;margin:2px 0 8px}
+.tdetail .sum{font-size:14.5px;background:var(--yellow-soft);border-left:4px solid var(--yellow);padding:12px 14px;border-radius:0 10px 10px 0;margin-bottom:16px}
+.tdetail h5{font-family:var(--ffh);font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin:18px 0 8px}
+.tdetail ol{padding-left:0;list-style:none;counter-reset:o}
+.tdetail ol li{counter-increment:o;display:flex;gap:10px;padding:7px 0;border-bottom:1px solid #eee9df;font-size:13.5px}
+.tdetail ol li::before{content:counter(o,lower-alpha);font-family:var(--ffm);font-weight:500;background:var(--black);color:var(--yellow);width:22px;height:22px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;flex:none;font-size:11px}
+.tdetail ul{padding-left:18px;font-size:13.5px}
+.tdetail ul li{margin-bottom:4px}
+.tdetail .mini{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.tdetail .mini div{border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13px}
+.tdetail .mini b{display:block;font-family:var(--ffh);font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:3px}
+.src{font-size:11.5px;color:var(--muted);margin-top:18px}
+/* toast */
+.toast{position:fixed;bottom:24px;left:16px;right:16px;max-width:460px;margin:0 auto;background:var(--black);color:#fff;padding:13px 18px;border-radius:12px;font-size:13px;font-weight:500;box-shadow:0 8px 32px rgba(0,0,0,.35);border-left:4px solid var(--yellow);transform:translateY(120px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:40;text-align:center}
+.toast.show{transform:translateY(0);opacity:1}
+/* printable form sheets */
+#sheetWrap{position:fixed;inset:0;background:#E5E2DA;z-index:30;display:none;overflow:auto}
+#sheetWrap.show{display:block}
+.sheetbar{position:sticky;top:0;background:var(--black);border-bottom:3px solid var(--yellow);color:#fff;padding:10px 18px;display:flex;gap:10px;align-items:center;z-index:2;font-family:var(--ffh);font-size:13px}
+.sheet{width:297mm;min-height:210mm;margin:18px auto;background:#fff;padding:12mm 12mm 10mm;box-shadow:0 4px 18px rgba(0,0,0,.15);font-family:Arial,Helvetica,sans-serif;color:#000;font-size:10.5pt;position:relative;line-height:1.35}
+.fh{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;border-bottom:3px solid var(--yellow);padding-bottom:6px}
+.fh .t1{color:#0E0602;font-weight:700;font-size:13.5pt;font-family:Montserrat,Arial,sans-serif}
+.fh .t2{color:#6f675e;font-size:12pt;margin-top:2px}
+.fh img{height:13mm}
+table.ft{width:100%;border-collapse:collapse;margin-top:6px}
+table.ft td,table.ft th{border:1px solid #000;padding:5px 7px;vertical-align:top;font-size:9.5pt}
+table.ft .lb{background:#F3EFE6;font-weight:700;width:22%}
+table.ft th{background:#F3EFE6;text-align:left}
+.ffoot{position:absolute;bottom:7mm;left:12mm;right:12mm;display:flex;justify-content:space-between;font-size:8pt;color:#333}
+.circ{display:inline-block;border:2px solid #000;border-radius:50%;padding:0 7px;font-weight:700}
+.sig{font-family:'Brush Script MT','Segoe Script',cursive;font-size:14pt}
+@media print{
+  body *{visibility:hidden}
+  #sheetWrap,#sheetWrap *{visibility:visible}
+  #sheetWrap{position:absolute;inset:0;background:#fff;overflow:visible}
+  .sheetbar{display:none}
+  .sheet{box-shadow:none;margin:0;page-break-after:always}
+  @page{size:A4 landscape;margin:0}
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="brand"><a href="jobs.html" title="Back to jobs" style="display:flex"><img src="data:image/png;base64,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" alt="PML"></a><span class="brand-sub">Fire<br>Protection</span><a class="btn ghost small" href="jobs.html#training" style="margin-left:6px">← Home</a><span class="topbar-title">Training &amp; Competency <span>· Q-Mark schemes</span></span></div>
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><div class="scheme" id="scheme"><a href="training.html">Fire doors · 052</a><a class="on" href="training-fs.html">Fire stopping</a></div><button class="btn ghost small" id="signOutBtn">Sign Out</button></div>
+</div>
+<div class="main">
+  <section class="hero" id="hero"></section>
+  <nav class="seg" id="tabs">
+    <a href="#dashboard" data-v="dashboard">Dashboard</a>
+    <a href="#operatives" data-v="operatives">Operatives</a>
+    <a href="#training" data-v="training">Training records <span class="n" id="nT"></span></a>
+    <a href="#assessments" data-v="assessments">Assessments <span class="n" id="nA"></span></a>
+    <a href="#register" data-v="register">Register</a>
+    <a href="#documents" data-v="documents">Documents</a>
+    <a href="#setup" data-v="setup">Set up</a>
+  </nav>
+  <div id="main"></div>
+</div>
+<div class="modal-bg" id="modalBg"><div class="modal" id="modal"></div></div>
+<div class="modal-bg" id="taskBg" style="z-index:25"><div class="modal wide" id="taskModal"></div></div>
+<div id="sheetWrap"><div class="sheetbar"><b id="sheetTitle">Form</b><span class="spacer"></span><button class="btn small" id="sheetDl" hidden>Download form</button><button class="btn small primary" id="sheetPrint">Print / save as PDF</button><button class="btn small" id="sheetClose">Close</button></div><div id="sheets"></div></div>
+<div class="toast" id="toast"></div>
+<script>
+/* ===================== reference data ===================== */
+const TASKS=[
+ {n:1,code:'SPA',name:'Scheme Procedures Acceptance'},
+ {n:2,code:'SU',name:'Fire Stopping Pre Installation Survey'},
+ {n:3,code:'PH',name:'Photographs'},
+ {n:4,code:'SP',name:'Specifying Fire Stopping Products'},
+ {n:5,code:'PEN',name:'Installation of Penetration Seals'},
+ {n:6,code:'LJS',name:'Installation of Linear Joint Seals'},
+ {n:7,code:'CB',name:'Installation of Cavity Barriers'},
+ {n:8,code:'RIA',name:'Record of Installation Activities'}
+];
+const CATS=['Skills','Knowledge','Experience','Behaviour'];
+const CAT_DESC={Skills:'The ability to perform an activity or task consistently with a specific intended outcome.',Knowledge:'Assimilation of facts, theories, and practices in relation to a given role, function, activity, or task.',Experience:'The participation in relevant activities or observation of facts and events leading to the acquirement or improvement of knowledge and skills.',Behaviour:'Observable things that an individual does or does not do.'};
+const ASSESS_TYPES={
+ live:{label:'Practical on a live job',ria:'',door:''},
+ mock:{label:'Mock install (training)',ria:'N/A: mock install (training)',door:'Mock up seal'},
+ test:{label:'Written knowledge test',ria:'N/A: written knowledge test',door:'N/A: test ref '},
+ review:{label:'Document / process review',ria:'N/A: document review',door:'N/A'}
+};
+const KEY='pml-fs-training-v1';
+
+/* ===================== seed data (from Paul's real records) ===================== */
+function seed(){
+ const D=(ref,title,issue,date,kind,status,link='')=>({id:uid(),ref,title,issue,date,kind,status,link});
+ const docs=[
+  D('AFE','Q-Mark Acceptable Forms of Evidence','Iss 1','2024-05-28','Scheme document','Active'),
+  D('CB 052/004','Q-Mark Acceptable Forms of Evidence (bulletin)','','2024-06-10','Certification Bulletin','Active'),
+  D('OTR','Operative Training Record','','','Form template','Active'),
+  D('ATCA','Approved Task Competency Assessment','','','Form template','Active'),
+  D('OCR','Operative Competency Register','','','Form template','Active'),
+  D('OCL','Operative Competency Log','','','Form template','Active'),
+  D('RIA FSP','FireSurveyPro Record of Installed Activities report','','','Form template','Active'),
+  D('QF SEL','PML Quelfire Seal Selector cheat sheet','','2026-11-16','Training material','Active'),
+  D('NF PEN','Nullifire Penetrations Drawing Pack','','','Manufacturer document','Active'),
+  D('FB180','FB180 Flexible Barrier system installation guide','','','Manufacturer document','Active')
+ ];
+ const byRef=r=>docs.find(d=>d.ref===r).id;
+ const topics=[
+  {id:uid(),title:'Quelfire seal selector training',tasks:[4,5],docs:['QF SEL'].map(byRef),
+   details:'Working through the PML Quelfire seal selector: picking the right seal for cables, pipes, batts, linear joints, through wall and single sided details, and finding the approved detail reference for each one.'},
+  {id:uid(),title:'Nullifire penetration seals',tasks:[4,5],docs:['NF PEN'].map(byRef),
+   details:'Nullifire penetration seal details from the drawing pack: batts, compounds, mastics, collars and wraps, service types and sizes, seal depths, and matching each pin to its approved detail.'},
+  {id:uid(),title:'Linear joint seals',tasks:[6],docs:[],
+   details:'Linear gap seals: measuring joint width and depth, movement capability, backing material, sealant depth and orientation, all to the manufacturer approved detail.'},
+  {id:uid(),title:'Cavity barriers and FB180 flexible barrier',tasks:[7],docs:['FB180'].map(byRef),
+   details:'Cavity barriers and the FB180 flexible barrier system: barrier type, fixings, junctions, overlaps, sealing gaps and edges, and recording each barrier against its approved detail.'},
+  {id:uid(),title:'Acceptable evidence and approved details',tasks:[4],docs:['AFE','CB 052/004'].map(byRef),
+   details:'Every seal needs a manufacturer document or approved detail reference. Going through the acceptable forms of evidence flow chart, and what to do (and how to flag it) when a detail is not covered.'},
+  {id:uid(),title:'Photographs and pin labelling',tasks:[3],docs:['RIA FSP'].map(byRef),
+   details:'Before, during and after photos for every pin, a tape in shot to show aperture, gap and depth, and labelling each seal so it is traceable to its pin reference.'},
+  {id:uid(),title:'FireSurveyPro RIA report',tasks:[8],docs:['RIA FSP'].map(byRef),
+   details:'Completing the Record of Installed Activities in FireSurveyPro: pin details, product, approved detail reference, photos and comments, and what goes in the handover pack.'},
+  {id:uid(),title:'Pre installation survey',tasks:[2],docs:[],
+   details:'Surveying each penetration, joint or cavity before specifying: wall or floor type and thickness, required fire rating, service type, material and size, aperture size and annular gap, orientation, and reporting anything that cannot be sealed to an approved detail.'},
+  {id:uid(),title:'Scheme Procedures Acceptance',tasks:[1],docs:[],
+   details:'What the scheme procedures acceptance is, who signs it, that it is signed before work starts, and what information the client must provide (compartment lines and fire ratings).'},
+  {id:uid(),title:'Project specific induction',tasks:[],docs:[],
+   details:'Project specific training at the start of the project (or for an operative joining later): site, compartment plans and ratings, products and approved details in use, controlled copies issued.'}
+ ];
+ const ops=[
+  {id:uid(),name:'Austin Leivers',initials:'AL',started:'',ended:'',role:'Fire stopping installer'},
+  {id:uid(),name:'Zanis Vorslov',initials:'ZV',started:'',ended:'',role:'Fire stopping installer'}
+ ];
+ return {settings:{company:'Planning Manager Ltd (PML Fire Protection)',certNo:'',apName:'',apInitials:'',apNumber:'',apTasks:[]},
+   operatives:ops,docs,topics,trainings:[],assessments:[],logs:[]};
+}
+/* ===================== state + helpers ===================== */
+let S; let memOnly=false;
+function uid(){return Math.random().toString(36).slice(2,10)}
+function load(){try{const r=localStorage.getItem(KEY);if(r){S=JSON.parse(r);return}}catch(e){memOnly=true}S=seed()}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){memOnly=true}}
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=d=>{if(!d)return '';const [y,m,dd]=d.split('-');return `${dd}.${m}.${y}`};
+const today=()=>new Date().toISOString().slice(0,10);
+const addMonths=(d,n)=>{const x=new Date(d+'T00:00:00');x.setMonth(x.getMonth()+n);return x.toISOString().slice(0,10)};
+const daysTo=d=>Math.round((new Date(d+'T00:00:00')-new Date(today()+'T00:00:00'))/864e5);
+const op=id=>id==='AP'?{id:'AP',name:S.settings.apName,initials:S.settings.apInitials}:S.operatives.find(o=>o.id===id);
+const doc=id=>S.docs.find(d=>d.id===id);
+const chips=a=>`<span class="tchips">${(a||[]).slice().sort((x,y)=>x-y).map(n=>`<button type="button" class="tchip" data-task="${n}" title="${esc(TASKS[n-1].name)}: click for what it covers">${n}</button>`).join('')}</span>`;
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2200)}
+
+/* competency status per operative per task */
+function taskStatus(opId,n){
+ const T=today();
+ const all=S.assessments.filter(a=>a.opId===opId&&a.approved==='Y'&&a.tasks.includes(n)).sort((a,b)=>a.date.localeCompare(b.date));
+ const as=all.filter(a=>a.date<=T);const planned=all.find(a=>a.date>T);
+ const trained=S.trainings.some(t=>t.date<=T&&t.tasks.includes(n)&&t.attendees.some(x=>x.opId===opId&&x.understood));
+ if(!as.length) return {state:planned?'planned':trained?'trained':'none',trained,planned:planned?.date};
+ const last=as[as.length-1];
+ const next2=as.map(a=>a.next).filter(Boolean).sort().pop();const d2=next2?daysTo(next2):9999;
+ return {state:d2<0?'over':d2<=60?'due':'ok',first:as[0].date,last:last.date,next:next2,days:d2,trained,planned:planned?.date};
+}
+function statusPill(st){
+ if(st.state==='ok')return `<span class="pill ok">Approved</span><span class="cellsub">due ${fmt(st.next)}</span>`;
+ if(st.state==='due')return `<span class="pill due">Due ${st.days}d</span><span class="cellsub">${fmt(st.next)}</span>`;
+ if(st.state==='over')return `<span class="pill over">Overdue</span><span class="cellsub">${fmt(st.next)}</span>`;
+ if(st.state==='planned')return `<span class="pill tr">Planned</span><span class="cellsub">${fmt(st.planned)}</span>`;
+ if(st.state==='trained')return `<span class="pill tr">Trained, not assessed</span>`;
+ return `<span class="pill none">Under supervision</span>`;
+}
+const activeOps=()=>S.operatives.filter(o=>!o.ended);
+
+/* ===================== forms ===================== */
+const val=id=>document.getElementById(id).value.trim();
+const picked=id=>[...document.querySelectorAll(`#${id} input:checked`)].map(i=>+i.value);
+function taskPickBind(el){el.querySelectorAll('input').forEach(i=>i.onchange=()=>i.parentElement.classList.toggle('on',i.checked))}
+function taskPick(id,sel){return `<div class="taskpick" id="${id}">${TASKS.map(t=>`<label class="${sel.includes(t.n)?'on':''}" title="${esc(t.name)}"><input type="checkbox" value="${t.n}" ${sel.includes(t.n)?'checked':''}>${t.n}. ${esc(t.code)}</label>`).join('')}</div>`}
+function setTasks(id,arr){document.querySelectorAll(`#${id} input`).forEach(i=>{i.checked=arr.includes(+i.value);i.parentElement.classList.toggle('on',i.checked)})}
+function bindActs(map){document.querySelectorAll('[data-act]').forEach(b=>{if(map[b.dataset.act])b.onclick=map[b.dataset.act]})}
+function modal(title,body,onSave,saveLabel='Save',extra=''){
+ const m=document.getElementById('modal');
+ m.innerHTML=`<header><h3>${title}</h3><span class="spacer"></span><button class="xbtn" id="mX">✕</button></header><div class="body">${body}</div><footer>${extra}<span class="spacer"></span><button class="btn" id="mC">Cancel</button>${onSave?`<button class="btn primary" id="mS">${saveLabel}</button>`:''}</footer>`;
+ document.getElementById('modalBg').classList.add('show');
+ const close=()=>document.getElementById('modalBg').classList.remove('show');
+ document.getElementById('mX').onclick=close;document.getElementById('mC').onclick=close;
+ if(onSave)document.getElementById('mS').onclick=()=>{if(onSave()!==false)close()};
+ return m;
+}
+function confirmBox(msg,yes){const m=modal('Are you sure?',`<p>${esc(msg)}</p>`,()=>{yes()},'Yes, go ahead')}
+
+function docChecklist(id,sel){
+ const groups=[...new Set(S.docs.filter(d=>d.status==='Active').map(d=>d.kind))];
+ return `<div class="checklist" id="${id}">${groups.map(g=>`<div class="it grp">${esc(g)}</div>`+S.docs.filter(d=>d.status==='Active'&&d.kind===g).map(d=>`<label class="it"><input type="checkbox" value="${d.id}" ${sel.includes(d.id)?'checked':''}><span class="mono" style="min-width:90px">${esc(d.ref)}</span><span>${esc(d.title)}</span></label>`).join('')).join('')}</div>`;
+}
+function trainingForm(t){
+ const isNew=!t;
+ t=t||{id:uid(),date:today(),title:'',tasks:[],docs:[],details:'',trainer:S.settings.apName,trainerSig:S.settings.apInitials,attendees:[]};
+ const people=[{id:'AP',name:S.settings.apName,initials:S.settings.apInitials},...activeOps()];
+ const attRow=p=>{const a=t.attendees.find(x=>x.opId===p.id);return `<div class="att" data-pid="${p.id}"><input type="checkbox" class="aon" ${a?'checked':''}><span>${esc(p.name)}${p.id==='AP'?' <span class="muted">(AP)</span>':''}</span><input type="text" class="asig" value="${esc(a?.sig||p.initials)}"><input type="date" class="adate" value="${a?.date||t.date}"><label style="font-size:12px;display:flex;gap:5px;align-items:center"><input type="checkbox" class="aund" ${!a||a.understood?'checked':''}>understood</label></div>`};
+ modal(isNew?'New training record':'Edit training record',`
+ <div class="f">
+  <div><label class="l">Date of training</label><input type="date" id="tDate" value="${t.date}"></div>
+  <div><label class="l">What was covered</label><select id="tTopic"><option value="">Choose a template to fill in the form…</option>${S.topics.map(x=>`<option value="${x.id}">${esc(x.title)}</option>`).join('')}</select><div class="hint">Fills in the title, tasks, description and documents. You can still change them.</div></div>
+  <div class="full"><label class="l">Title</label><input type="text" id="tTitle" value="${esc(t.title)}" placeholder="e.g. Certification Bulletins toolbox talk"></div>
+  <div class="full"><label class="l">Approved Task number(s) ${INFO()}</label>${taskPick('tTasks',t.tasks)}</div>
+  <div class="full"><label class="l">Details of what was covered in this training</label><textarea id="tDetails">${esc(t.details)}</textarea></div>
+  <div class="full"><label class="l">Reference of supporting documents used</label>${docChecklist('tDocs',t.docs)}</div>
+  <div><label class="l">Training conducted by</label><select id="tTrainer"><option value="${esc(S.settings.apName)}|${esc(S.settings.apInitials)}">${esc(S.settings.apName)} (Approved Person)</option>${activeOps().map(o=>`<option value="${esc(o.name)}|${esc(o.initials)}" ${t.trainer===o.name?'selected':''}>${esc(o.name)} (delegated)</option>`).join('')}<option value="External provider|" ${t.trainer==='External provider'?'selected':''}>External provider</option></select><div class="hint">If training is delegated or outsourced, keep evidence that all task topics were covered.</div></div>
+  <div><label class="l">Trainer signature</label><input type="text" id="tTrSig" value="${esc(t.trainerSig)}"></div>
+  <div class="full"><label class="l">Attended and understood by</label>
+   <div class="checklist"><div class="att head"><span></span><span>Name</span><span>Signature</span><span>Date</span><span></span></div>${people.map(attRow).join('')}</div>
+   <div class="hint">Untick "understood" if they didn't confirm understanding: per TRCO 052 they then must not sign.</div></div>
+ </div>`,()=>{
+  t.date=val('tDate');t.title=val('tTitle');t.tasks=picked('tTasks');t.details=document.getElementById('tDetails').value.trim();
+  t.docs=[...document.querySelectorAll('#tDocs input:checked')].map(i=>i.value);
+  const [tn,ts]=document.getElementById('tTrainer').value.split('|');t.trainer=tn;t.trainerSig=val('tTrSig')||ts;
+  t.attendees=[...document.querySelectorAll('.att[data-pid]')].filter(r=>r.querySelector('.aon').checked).map(r=>{const p=people.find(x=>x.id===r.dataset.pid);const u=r.querySelector('.aund').checked;return {opId:p.id,name:p.name,sig:u?r.querySelector('.asig').value.trim():'',date:r.querySelector('.adate').value,understood:u}});
+  if(!t.title||!t.date){toast('Add a date and title');return false}
+  if(!t.attendees.length){toast('Tick at least one attendee');return false}
+  if(isNew)S.trainings.push(t);save();render();toast('Training record saved');
+ },'Save record',isNew?'':`<button class="btn danger" id="tDel">Delete</button>`);
+ taskPickBind(document.getElementById('tTasks'));
+ document.getElementById('tTopic').onchange=e=>{const x=S.topics.find(y=>y.id===e.target.value);if(!x)return;
+  document.getElementById('tTitle').value=x.title;setTasks('tTasks',x.tasks);document.getElementById('tDetails').value=x.details;
+  document.querySelectorAll('#tDocs input').forEach(i=>i.checked=x.docs.includes(i.value));toast('Filled in from template')};
+ document.getElementById('tTrainer').onchange=e=>{document.getElementById('tTrSig').value=e.target.value.split('|')[1]||''};
+ document.getElementById('tDate').onchange=e=>document.querySelectorAll('.adate').forEach(d=>d.value=e.target.value);
+ const del=document.getElementById('tDel');if(del)del.onclick=()=>{S.trainings=S.trainings.filter(x=>x.id!==t.id);save();document.getElementById('modalBg').classList.remove('show');render();toast('Deleted')};
+}
+function assessForm(a){
+ const isNew=!a;
+ a=a||{id:uid(),date:today(),opId:activeOps()[0]?.id||'',type:'live',tasks:[],ria:'',door:'',details:'',approved:'Y',next:addMonths(today(),12),opSigDate:today()};
+ modal(isNew?'New competency assessment':'Edit competency assessment',`
+ <div class="f">
+  <div><label class="l">Operative</label><select id="aOp">${S.operatives.map(o=>`<option value="${o.id}" ${a.opId===o.id?'selected':''}>${esc(o.name)} (${esc(o.initials)})</option>`).join('')}</select></div>
+  <div><label class="l">Assessment type</label><select id="aType">${Object.entries(ASSESS_TYPES).map(([k,v])=>`<option value="${k}" ${a.type===k?'selected':''}>${v.label}</option>`).join('')}</select></div>
+  <div><label class="l">Date of assessment</label><input type="date" id="aDate" value="${a.date}"></div>
+  <div><label class="l">Date of next assessment</label><input type="date" id="aNext" value="${a.next}"><div class="hint">Defaults to 12 months after the assessment.</div></div>
+  <div><label class="l">RIA register reference of activity reviewed</label><input type="text" id="aRia" value="${esc(a.ria)}"></div>
+  <div><label class="l">Pin / seal reference</label><input type="text" id="aDoor" value="${esc(a.door)}"></div>
+  <div class="full"><label class="l">Approved Task number(s) ${INFO()}</label>${taskPick('aTasks',a.tasks)}</div>
+  <div class="full"><div class="row"><label class="l" style="margin:0">Details of the assessment completed</label><span class="spacer"></span><button class="btn small" id="aPrompts">Add a line per task</button></div><textarea id="aDetails" style="min-height:150px;margin-top:4px">${esc(a.details)}</textarea></div>
+  <div><label class="l">Approved to carry out the task without supervision</label><select id="aAppr"><option value="Y" ${a.approved==='Y'?'selected':''}>Y</option><option value="N" ${a.approved==='N'?'selected':''}>N</option></select></div>
+  <div><label class="l">Operative signature date</label><input type="date" id="aOpDate" value="${a.opSigDate}"></div>
+ </div>`,()=>{
+  Object.assign(a,{opId:val('aOp'),type:val('aType'),date:val('aDate'),next:val('aNext'),ria:val('aRia'),door:val('aDoor'),tasks:picked('aTasks'),details:document.getElementById('aDetails').value.trim(),approved:val('aAppr'),opSigDate:val('aOpDate')});
+  if(!a.tasks.length){toast('Pick at least one task');return false}
+  if(isNew)S.assessments.push(a);save();render();toast('Assessment saved');
+ },'Save assessment',isNew?'':`<button class="btn danger" id="aDel">Delete</button>`);
+ taskPickBind(document.getElementById('aTasks'));
+ document.getElementById('aDate').onchange=e=>{document.getElementById('aNext').value=addMonths(e.target.value,12);document.getElementById('aOpDate').value=e.target.value};
+ document.getElementById('aType').onchange=e=>{const t=ASSESS_TYPES[e.target.value];document.getElementById('aRia').value=t.ria;document.getElementById('aDoor').value=t.door};
+ document.getElementById('aPrompts').onclick=()=>{const ta=document.getElementById('aDetails');const lines=picked('aTasks').map(n=>`${n}. ${TASKS[n-1].code}: `);if(!lines.length){toast('Pick the tasks first');return}ta.value=(ta.value?ta.value+'\n':'')+lines.join('\n');ta.focus()};
+ const del=document.getElementById('aDel');if(del)del.onclick=()=>{S.assessments=S.assessments.filter(x=>x.id!==a.id);save();document.getElementById('modalBg').classList.remove('show');render();toast('Deleted')};
+}
+function opForm(o){
+ const isNew=!o;o=o||{id:uid(),name:'',initials:'',started:today(),ended:'',role:'Fire stopping installer'};
+ modal(isNew?'Add operative':'Edit operative',`<div class="f">
+  <div><label class="l">Full name</label><input type="text" id="oName" value="${esc(o.name)}"></div>
+  <div><label class="l">Initials (unique)</label><input type="text" id="oInit" value="${esc(o.initials)}"></div>
+  <div><label class="l">Role</label><select id="oRole">${['Fire stopping installer','Surveyor','Office / admin tasks','Apprentice'].map(r=>`<option ${o.role===r?'selected':''}>${r}</option>`).join('')}</select></div>
+  <div></div>
+  <div><label class="l">Date started</label><input type="date" id="oStart" value="${o.started}"></div>
+  <div><label class="l">Date ended</label><input type="date" id="oEnd" value="${o.ended}"><div class="hint">Only when they stop doing Approved Tasks. Records are kept.</div></div></div>`,()=>{
+  o.name=val('oName');o.initials=val('oInit').toUpperCase();o.role=val('oRole');o.started=val('oStart');o.ended=val('oEnd');
+  if(!o.name||!o.initials){toast('Name and initials needed');return false}
+  if(S.operatives.some(x=>x.id!==o.id&&x.initials===o.initials)){toast('Initials must be unique');return false}
+  if(isNew){S.operatives.push(o);selOp=o.id}save();render();toast('Saved')});
+ document.getElementById('oName').oninput=e=>{if(isNew)document.getElementById('oInit').value=e.target.value.split(/\s+/).filter(Boolean).map(w=>w[0]).join('').toUpperCase()};
+}
+function logForm(opId){
+ modal('Add competency log entry',`<div class="f"><div><label class="l">Category</label><select id="lCat">${CATS.map(c=>`<option>${c}</option>`).join('')}</select><div class="hint" id="lHint">${CAT_DESC.Skills}</div></div><div><label class="l">Date</label><input type="date" id="lDate" value="${today()}"></div>
+ <div class="full"><label class="l">Log</label><textarea id="lText" placeholder="What they did, and the evidence (RIA ref, photos, test result, feedback)"></textarea></div></div>`,()=>{
+  const text=document.getElementById('lText').value.trim();if(!text){toast('Write the log entry');return false}
+  S.logs.push({id:uid(),opId,date:val('lDate'),cat:val('lCat'),text});save();render();toast('Log entry added')});
+ document.getElementById('lCat').onchange=e=>document.getElementById('lHint').textContent=CAT_DESC[e.target.value];
+}
+function docForm(d){
+ const isNew=!d;d=d||{id:uid(),ref:'',title:'',issue:'',date:today(),kind:'Training material',status:'Active',link:''};
+ const kinds=['Scheme document','Form template','Certification Bulletin','Training material','Manufacturer document','Evidence'];
+ modal(isNew?'Add document':'Edit document',`<div class="f">
+  <div><label class="l">Reference</label><input type="text" id="dRef" value="${esc(d.ref)}"></div>
+  <div><label class="l">Type</label><select id="dKind">${kinds.map(k=>`<option ${d.kind===k?'selected':''}>${k}</option>`).join('')}</select></div>
+  <div class="full"><label class="l">Title</label><input type="text" id="dTitle" value="${esc(d.title)}"></div>
+  <div><label class="l">Issue</label><input type="text" id="dIss" value="${esc(d.issue)}"></div>
+  <div><label class="l">Issue date</label><input type="date" id="dDate" value="${d.date}"></div>
+  <div><label class="l">Status</label><select id="dStat"><option ${d.status==='Active'?'selected':''}>Active</option><option ${d.status==='Withdrawn'?'selected':''}>Withdrawn</option></select></div>
+  <div><label class="l">Link to file (Dropbox, SharePoint, your site)</label><input type="url" id="dLink" value="${esc(d.link)}" placeholder="https://"></div></div>`,()=>{
+  Object.assign(d,{ref:val('dRef'),kind:val('dKind'),title:val('dTitle'),issue:val('dIss'),date:val('dDate'),status:val('dStat'),link:val('dLink')});
+  if(!d.ref||!d.title){toast('Reference and title needed');return false}
+  if(isNew)S.docs.push(d);save();render();toast('Saved')});
+}
+function topicForm(x){
+ const isNew=!x;x=x||{id:uid(),title:'',tasks:[],docs:[],details:''};
+ modal(isNew?'Add "what was covered" template':'Edit template',`<div class="f">
+  <div class="full"><label class="l">Title</label><input type="text" id="xTitle" value="${esc(x.title)}"></div>
+  <div class="full"><label class="l">Approved Task number(s) ${INFO()}</label>${taskPick('xTasks',x.tasks)}</div>
+  <div class="full"><label class="l">Standard description</label><textarea id="xDet">${esc(x.details)}</textarea></div>
+  <div class="full"><label class="l">Supporting documents</label>${docChecklist('xDocs',x.docs)}</div></div>`,()=>{
+  x.title=val('xTitle');x.tasks=picked('xTasks');x.details=document.getElementById('xDet').value.trim();x.docs=[...document.querySelectorAll('#xDocs input:checked')].map(i=>i.value);
+  if(!x.title){toast('Give it a title');return false}
+  if(isNew)S.topics.push(x);save();render();toast('Template saved')},'Save template',isNew?'':`<button class="btn danger" id="xDel">Delete</button>`);
+ taskPickBind(document.getElementById('xTasks'));
+ const del=document.getElementById('xDel');if(del)del.onclick=()=>{S.topics=S.topics.filter(y=>y.id!==x.id);save();document.getElementById('modalBg').classList.remove('show');render()};
+}
+
+/* ===================== printable BM TRADA forms ===================== */
+const LOGO=`<img src="data:image/png;base64,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" alt="PML Fire Protection">`;
+function head(t1,t2){return `<div class="fh"><div><div class="t1">${t1}</div><div class="t2">${t2}</div></div>${LOGO}</div>`}
+function foot(code,i,n){return `<div class="ffoot"><span>${code}</span><span>${esc(S.settings.company)}</span><span>Page ${i} of ${n}</span></div>`}
+const dname=d=>`${d.title}${d.issue?' '+d.issue:''} (${d.ref})`;
+function formOTR(t,i,n){
+ const docs=t.docs.map(doc).filter(Boolean);
+ const pad=Math.max(6,Math.ceil(t.attendees.length/2));const left=t.attendees.slice(0,pad),right=t.attendees.slice(pad);
+ const ar=a=>a?`<td>${esc(a.name)}</td><td class="sig">${esc(a.understood?a.sig:'')}</td><td>${fmt(a.date)}</td>`:'<td>&nbsp;</td><td></td><td></td>';
+ const docRows=[];for(let k=0;k<Math.max(3,Math.ceil(docs.length/2));k++)docRows.push(`<tr>${k===0?`<td class="lb" rowspan="${Math.max(3,Math.ceil(docs.length/2))}">Reference of Supporting Documents Used:</td>`:''}<td colspan="2">${docs[k*2]?esc(dname(docs[k*2])):''}</td><td colspan="2">${docs[k*2+1]?esc(dname(docs[k*2+1])):''}</td></tr>`);
+ return `<div class="sheet">${head('Q-MARK FIRE STOPPING INSTALLATION SCHEME','Operative Training Record')}
+ <table class="ft"><tr><td colspan="3" class="lb" style="width:auto">Details of what was covered in this training:</td><td class="lb" style="width:20%">Approved Task Number(s) (if applicable):</td><td style="width:12%">${t.tasks.slice().sort((a,b)=>a-b).join(', ')}</td></tr>
+ <tr><td colspan="5" style="height:38mm"><b>${esc(t.title)}</b><br>${esc(t.details).replace(/\n/g,'<br>')}</td></tr>
+ ${docRows.join('')}
+ <tr><td class="lb">Training Conducted by:</td><td colspan="2"><b>Name:</b> ${esc(t.trainer)}</td><td colspan="2"><b>Signature:</b> <span class="sig">${esc(t.trainerSig)}</span></td></tr></table>
+ <div style="font-weight:700;margin:8px 0 2px">Attended and understood by:</div>
+ <table class="ft" style="margin-top:0"><tr><th>Name</th><th>Signature</th><th>Date</th><th style="background:#fff;border-top:0;border-bottom:0;width:8px"></th><th>Name</th><th>Signature</th><th>Date</th></tr>
+ ${Array.from({length:pad}).map((_,k)=>`<tr>${ar(left[k])}<td style="border-top:0;border-bottom:0"></td>${ar(right[k])}</tr>`).join('')}</table>
+ ${foot('OTR Fire Stopping - Operative Training Record',i,n)}</div>`;
+}
+function formATCA(a,i,n){
+ const o=op(a.opId)||{};const s=S.settings;
+ return `<div class="sheet">${head('Q-MARK FIRE STOPPING INSTALLATION SCHEME','Approved Task Competency Assessment')}
+ <table class="ft"><tr><td class="lb">Approved Persons Name:</td><td>${esc(s.apName)}</td><td class="lb">Approved Persons Number:</td><td>${esc(s.apNumber)}</td></tr>
+ <tr><td class="lb">Competency Assessment Carried out for: (Operatives Name)</td><td>${esc(o.name)}</td><td class="lb">Trained Operative Initials:</td><td>${esc(o.initials)}</td></tr>
+ <tr><td class="lb">RIA Register Reference Number of Activity Reviewed During Assessment (if applicable):</td><td>${esc(a.ria)}</td><td class="lb">Pin / Seal Reference (if applicable):</td><td>${esc(a.door)}</td></tr></table>
+ <table class="ft"><tr><td class="lb" style="width:auto">Details of the assessment completed:</td><td class="lb" style="width:20%">Approved Task Number(s):</td><td style="width:14%">${a.tasks.slice().sort((x,y)=>x-y).join(', ')}</td></tr>
+ <tr><td colspan="3" style="height:52mm">${esc(a.details).replace(/\n/g,'<br>')}</td></tr></table>
+ <table class="ft"><tr><td class="lb">Approved to Carry Out the Task Without Supervision (circle option):</td><td style="text-align:center">${a.approved==='Y'?'<span class="circ">Y</span>':'Y'}</td><td style="text-align:center">${a.approved==='N'?'<span class="circ">N</span>':'N'}</td><td class="lb">Date of Next Assessment:</td><td style="text-align:center">${fmt(a.next)}</td></tr>
+ <tr><td class="lb">Approved Person Signature:</td><td colspan="2" class="sig" style="text-align:center">${esc(s.apInitials)}</td><td class="lb">Operatives Signature:</td><td class="sig" style="text-align:center">${esc(o.initials)}</td></tr>
+ <tr><td class="lb">Date of Assessment:</td><td colspan="2" style="text-align:center">${fmt(a.date)}</td><td class="lb">Operative Signature Date:</td><td style="text-align:center">${fmt(a.opSigDate)}</td></tr></table>
+ ${foot('ATCA Fire Stopping - Approved Task Competency Assessment',i,n)}</div>`;
+}
+function formOCR(){
+ const s=S.settings;
+ return `<div class="sheet">${head('Q-MARK FIRE STOPPING INSTALLATION SCHEME','Operative Competency Register')}
+ <table class="ft"><tr><td class="lb">Company Name:</td><td>${esc(s.company)}</td><td class="lb">Certification Number:</td><td>${esc(s.certNo)}</td></tr></table>
+ <table class="ft"><tr><th rowspan="2">Approved Persons Name</th><th rowspan="2">Approved Persons Initials</th><th rowspan="2">Approved Persons Number</th><th colspan="8" style="text-align:center">Approved Tasks (which tasks the Approved Person carries out themselves)</th></tr>
+ <tr>${TASKS.map(t=>`<th style="text-align:center">${t.n}</th>`).join('')}</tr>
+ <tr><td>${esc(s.apName)}</td><td>${esc(s.apInitials)}</td><td>${esc(s.apNumber)}</td>${TASKS.map(t=>`<td style="text-align:center">${s.apTasks.includes(t.n)?esc(s.apInitials):''}</td>`).join('')}</tr></table>
+ <table class="ft"><tr><th rowspan="2">Operatives Name</th><th rowspan="2">Operatives Initials</th><th rowspan="2">Date Started</th><th colspan="8" style="text-align:center">Approved Tasks: Date Approved</th><th rowspan="2">Date Ended</th></tr>
+ <tr>${TASKS.map(t=>`<th style="text-align:center;width:7%">${t.n}</th>`).join('')}</tr>
+ ${S.operatives.map(o=>`<tr><td>${esc(o.name)}</td><td>${esc(o.initials)}</td><td>${fmt(o.started)}</td>${TASKS.map(t=>`<td style="text-align:center">${fmt(taskStatus(o.id,t.n).first||'')}</td>`).join('')}<td>${fmt(o.ended)}</td></tr>`).join('')}
+ ${Array.from({length:Math.max(0,8-S.operatives.length)}).map(()=>`<tr><td>&nbsp;</td><td></td><td></td>${TASKS.map(()=>'<td></td>').join('')}<td></td></tr>`).join('')}</table>
+ <div style="font-size:8pt;margin-top:6px">${TASKS.map(t=>`${t.n} ${esc(t.name)}`).join(' · ')}</div>
+ ${foot('OCR Fire Stopping - Operative Competency Register',1,1)}</div>`;
+}
+function formOCL(opId){
+ const o=op(opId);const s=S.settings;const lg=S.logs.filter(l=>l.opId===opId).sort((a,b)=>a.date.localeCompare(b.date));
+ return `<div class="sheet">${head('Q-MARK FIRE STOPPING INSTALLATION SCHEME','Operative Competency Log')}
+ <table class="ft"><tr><td class="lb">Approved Persons Name:</td><td>${esc(s.apName)}</td><td class="lb">Approved Persons Number:</td><td>${esc(s.apNumber)}</td></tr>
+ <tr><td class="lb">Operatives Name:</td><td>${esc(o.name)}</td><td class="lb">Operatives Initials:</td><td>${esc(o.initials)}</td></tr>
+ <tr><td class="lb">Date Started:</td><td>${fmt(o.started)}</td><td class="lb">Date Ended:</td><td>${fmt(o.ended)}</td></tr></table>
+ <table class="ft"><tr><th style="width:12%">Category</th><th style="width:22%">Description</th><th>Log</th></tr>
+ ${CATS.map(c=>`<tr><td><b>${c}</b></td><td style="font-size:8.5pt">${CAT_DESC[c]}</td><td style="height:24mm">${lg.filter(l=>l.cat===c).map(l=>`<div><b>${fmt(l.date)}</b> ${esc(l.text)}</div>`).join('')}</td></tr>`).join('')}</table>
+ ${foot('OCL Fire Stopping - Operative Competency Log',1,1)}</div>`;
+}
+let sheetHTML='',sheetName='';
+function printForms(kind,ids){
+ let html='';
+ if(kind==='OTR'){const ts=ids.map(id=>S.trainings.find(t=>t.id===id));html=ts.map((t,i)=>formOTR(t,i+1,ts.length)).join('');sheetName=`OTR ${fmt(ts[0].date)} ${ts[0].title}`}
+ if(kind==='ATCA'){const as=ids.map(id=>S.assessments.find(a=>a.id===id));html=as.map((a,i)=>formATCA(a,i+1,as.length)).join('');sheetName=`ATCA ${op(as[0].opId)?.name||''} ${fmt(as[0].date)}`}
+ if(kind==='OCR'){html=formOCR();sheetName=`OCR Operative Competency Register ${fmt(today())}`}
+ if(kind==='OCL'){html=formOCL(ids[0]);sheetName=`OCL ${op(ids[0]).name}`}
+ sheetHTML=html;
+ document.getElementById('sheets').innerHTML=html;
+ document.getElementById('sheetTitle').textContent=sheetName;
+ document.getElementById('sheetWrap').classList.add('show');document.getElementById('sheetWrap').scrollTop=0;
+}
+document.getElementById('sheetClose').onclick=()=>document.getElementById('sheetWrap').classList.remove('show');
+document.getElementById('sheetPrint').onclick=()=>{try{window.print()}catch(e){}setTimeout(()=>{if(DL)toast('If nothing opened, use Download form and print that')},600)};
+document.getElementById('sheetDl').onclick=()=>{
+ const css=[...document.querySelectorAll('style')].map(s=>s.textContent).join('\n');
+ const page=`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${esc(sheetName)}</title><style>${css}\nbody{background:#E5E7EB}</style></head><body><div id="sheetWrap" class="show" style="position:static"><div id="sheets">${sheetHTML}</div></div><script>window.onload=()=>setTimeout(()=>window.print(),300)<\/script></body></html>`;
+ saveFile(`${sheetName}.html`,page);
+};
+
+/* file saving: Claude viewer capability, else normal browser download */
+let DL=null;
+async function saveFile(name,data){
+ name=name.replace(/[\\/:*?"<>|]/g,' ').replace(/\s+/g,' ').trim();
+ if(DL){try{await DL.save({filename:name,data});toast('Saved')}catch(e){toast(e&&e.code==='declined'?'Download cancelled':'Download not available here')}return}
+ try{const b=new Blob([data],{type:'application/octet-stream'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();a.remove()}catch(e){toast('Download not available here')}
+}
+if(window.claude&&window.claude.use){window.claude.use('downloads').then(d=>{DL=d;if(d)document.getElementById('sheetDl').hidden=false}).catch(()=>{})}
+else document.getElementById('sheetDl').hidden=false;
+
+
+/* ===================== Approved Task descriptions (TRCO 052 / OCR 052, Approved Tasks) ===================== */
+const TASK_INFO={
+1:{sum:'Getting the client to read, accept and sign the scheme procedures before any fire stopping starts, and knowing what information they have to give us.',
+ out:['Understands the scheme procedures acceptance form and what it is for.','Knows the formal process for telling the client when work will NOT be carried out under the scheme.','Can explain the procedures to the client so they can accept and sign them.','Knows what the client must provide before work starts: compartment lines, fire ratings and any fire strategy.','Can review that information for anything that would stop the seals being installed properly.'],
+ ev:['Signed scheme procedures acceptance for every project','Copies of any formal notifications for work outside the scheme'],docs:['AFE'],when:'Start of every project'},
+2:{sum:'Surveying every penetration, joint or cavity before anything is specified: what it goes through, how thick, what rating, what service, how big the gap.',
+ out:['Records the wall or floor type, construction and thickness.','Records the fire resistance required for that compartment.','Records the service type, material and size, the aperture size and the annular gap.','Records the orientation (wall or floor) and anything nearby that affects the seal.','Reports anything that cannot be sealed to an approved detail before work starts.'],
+ ev:['Survey record per pin with photos','Record of any concerns raised and how they were closed out'],docs:['AFE'],when:'Before specifying or ordering'},
+3:{sum:'Taking before, during and after photos of every pin, with a tape in shot to prove sizes and depths, all traceable to the pin reference.',
+ out:['Before: the opening, service and substrate.','During: aperture size, annular gap, backing material and product depth, with a tape in shot.','After: the finished seal from each side where accessible, with its identification label.','Every photo traceable to its pin reference.'],
+ ev:['Photos on the RIA report for every pin'],docs:['RIA FSP'],when:'Every pin, every stage'},
+4:{sum:'Picking the right product and approved detail for each pin, getting the manufacturer documents, keeping proof of purchase and checking deliveries.',
+ out:['Matches the product and approved detail to the substrate, service, aperture, orientation and fire rating.','Knows the acceptable forms of evidence and keeps the reference for every seal.','Knows what to do when a detail is not covered: flag it, get it resolved or record it as non compliant.','Keeps evidence of purchase traceable to the job.','Checks deliveries are as specified, including shelf life and storage.'],
+ ev:['Approved detail reference per pin','Purchase and delivery records against the job'],docs:['AFE','CB 052/004'],when:'Between survey and install'},
+5:{sum:'Installing penetration seals for cables, pipes and ducts to the manufacturer approved detail.',
+ out:['Reads and understands the approved detail before starting, and knows what to do if it is not clear.','Uses the right batt, compound, mastic, collar or wrap for the service.','Installs to the correct sizes, depths and distances, both sides where required.','Checks services are supported and the seal is complete with no gaps.','Labels each seal so it is traceable to its pin reference.'],
+ ev:['RIA entry per pin with during and after photos','Competency assessment on a live or mock seal'],docs:['NF PEN','QF SEL'],when:'Every installation'},
+6:{sum:'Sealing linear gaps and joints to the manufacturer approved detail, at the right width, depth and backing.',
+ out:['Measures joint width and depth and checks it is within the approved detail.','Uses the correct backing material and sealant depth.','Allows for movement where the detail requires it.','Installs in the correct orientation and labels it.'],
+ ev:['RIA entry with during photos showing width and depth'],docs:['AFE'],when:'Every installation'},
+7:{sum:'Installing cavity barriers, including flexible barriers like FB180, so the cavity is closed off with no gaps.',
+ out:['Picks the right barrier type for the cavity and rating.','Fixes it to the manufacturer details, with correct overlaps and junctions.','Seals edges, joints and any services passing through.','Records and labels each barrier.'],
+ ev:['RIA entry with photos of fixings, overlaps and junctions'],docs:['FB180'],when:'Every installation'},
+8:{sum:'Completing the Record of Installed Activities for every pin, handing over the pack, and keeping the register up to date.',
+ out:['Completes the RIA with every pin, its product and approved detail reference.','Knows who is allowed to sign it off.','Knows what goes in the handover pack and when it must be provided.','Updates the installation register.'],
+ ev:['Completed RIA report per job','Handover pack issued to the client'],docs:['RIA FSP'],when:'Project completion'}
+};
+let curTask=1;
+function openTasks(n){
+ curTask=n||curTask||1;
+ const m=document.getElementById('taskModal');
+ const draw=()=>{
+  const t=TASKS[curTask-1],x=TASK_INFO[curTask];
+  const trained=S.trainings.filter(r=>r.tasks.includes(curTask)).length;
+  const peeps=activeOps().map(o=>({o,st:taskStatus(o.id,curTask)}));
+  m.innerHTML=`<header><h3>Approved Task descriptions</h3><span class="tag">Fire stopping · 8 tasks</span><span class="spacer"></span><button class="xbtn" id="tX">✕</button></header>
+  <div class="tview"><div class="tnav">${TASKS.map(k=>`<button data-tn="${k.n}" class="${k.n===curTask?'on':''}"><span class="num">${k.n}</span><span>${esc(k.name)}<span class="cd">${k.code}</span></span></button>`).join('')}</div>
+  <div class="tdetail"><div class="eyebrow">Approved Task ${t.n} · ${t.code}</div><h4>${esc(t.name)}</h4>
+   <div class="sum">${esc(x.sum)}</div>
+   <div class="mini"><div><b>When</b>${esc(x.when)}</div><div><b>Key documents</b>${x.docs.map(esc).join(', ')}</div><div><b>Training records covering it</b>${trained}</div></div>
+   <h5>The operative must be able to show</h5><ol>${x.out.map(o=>`<li><span>${esc(o)}</span></li>`).join('')}</ol>
+   <h5>Evidence to keep</h5><ul>${x.ev.map(e=>`<li>${esc(e)}</li>`).join('')}</ul>
+   <h5>Who is approved for it</h5>
+   <div class="tchips" style="gap:8px">${S.settings.apTasks.includes(curTask)?`<span class="pill ap">${esc(S.settings.apName)} (AP)</span>`:''}${peeps.map(p=>`<span>${esc(p.o.name)} ${statusPill(p.st)}</span>`).join(' ')}</div>
+   <p class="src">Provisional wording: check it against the fire stopping scheme's own Training and Competency Process and update it if it differs. Before working on a task without supervision an operative must be trained on it and assessed as competent by the Approved Person, and at least one person must be approved for every task.</p>
+  </div></div>`;
+  m.querySelectorAll('[data-tn]').forEach(b=>b.onclick=()=>{curTask=+b.dataset.tn;draw()});
+  document.getElementById('tX').onclick=()=>document.getElementById('taskBg').classList.remove('show');
+ };
+ draw();document.getElementById('taskBg').classList.add('show');
+}
+const INFO=(label='Task descriptions')=>`<button type="button" class="infobtn" data-tinfo="1"><span class="i">i</span>${label}</button>`;
+document.addEventListener('click',e=>{
+ const c=e.target.closest('[data-task]');if(c){e.preventDefault();e.stopPropagation();openTasks(+c.dataset.task);return}
+ const i=e.target.closest('[data-tinfo]');if(i){e.preventDefault();e.stopPropagation();openTasks(+i.dataset.tinfo||1)}
+},true);
+document.getElementById('taskBg').addEventListener('click',e=>{if(e.target.id==='taskBg')e.currentTarget.classList.remove('show')});
+
+/* ===================== overrides for the new look ===================== */
+function statusPill(st){
+ if(st.state==='ok')return `<span class="pill ok">Approved</span><span class="cellsub">due ${fmt(st.next)}</span>`;
+ if(st.state==='due')return `<span class="pill due">Due ${st.days}d</span><span class="cellsub">${fmt(st.next)}</span>`;
+ if(st.state==='over')return `<span class="pill over">Overdue</span><span class="cellsub">${fmt(st.next)}</span>`;
+ if(st.state==='planned')return `<span class="pill plan">Planned</span><span class="cellsub">${fmt(st.planned)}</span>`;
+ if(st.state==='trained')return `<span class="pill tr">Trained, not assessed</span>`;
+ return `<span class="pill">Under supervision</span>`;
+}
+function taskPick(id,sel){return `<div class="taskpick" id="${id}">${TASKS.map(t=>`<label class="${sel.includes(t.n)?'on':''}" title="${esc(t.name)}"><input type="checkbox" value="${t.n}" ${sel.includes(t.n)?'checked':''}>${t.n}. ${esc(t.code)}</label>`).join('')}</div><div class="tsum" id="${id}Sum"></div>`}
+function taskSum(id){const box=document.getElementById(id+'Sum');if(!box)return;const ns=picked(id);box.innerHTML=ns.map(n=>`<div><b>${n}. ${esc(TASKS[n-1].name)}:</b> ${esc(TASK_INFO[n].sum)} <a href="#" data-task="${n}">More</a></div>`).join('')}
+function taskPickBind(el){el.querySelectorAll('input').forEach(i=>i.onchange=()=>{i.parentElement.classList.toggle('on',i.checked);taskSum(el.id)});taskSum(el.id)}
+function setTasks(id,arr){document.querySelectorAll(`#${id} input`).forEach(i=>{i.checked=arr.includes(+i.value);i.parentElement.classList.toggle('on',i.checked)});taskSum(id)}
+const thTask=t=>`<th class="t"><button class="thbtn" data-task="${t.n}" title="What ${esc(t.name)} covers">${t.n}. ${t.code}<span class="q">?</span></button></th>`;
+const card=(title,tag,actions,body)=>`<div class="card"><div class="card-header"><h2>${title}${tag?` <span class="tag">${tag}</span>`:''}</h2><div class="card-actions">${actions||''}</div></div><div class="card-body">${body}</div></div>`;
+
+/* ===================== views ===================== */
+const V={};
+V.dashboard=()=>{
+ const ops=activeOps();
+ const cells=[];ops.forEach(o=>TASKS.forEach(t=>cells.push({o,t,st:taskStatus(o.id,t.n)})));
+ const over=cells.filter(c=>c.st.state==='over'),due=cells.filter(c=>c.st.state==='due'),gap=cells.filter(c=>c.st.state==='trained'||c.st.state==='none'),plan=cells.filter(c=>c.st.state==='planned');
+ const withdrawn=[...new Set(S.trainings.filter(t=>t.date>='2026-04-01').flatMap(t=>t.docs).map(doc).filter(d=>d&&d.status==='Withdrawn'))];
+ let al='';
+ over.forEach(c=>al+=`<div class="alert bad"><b>${esc(c.o.name)}</b>: task ${c.t.n} (${esc(c.t.name)}) reassessment was due ${fmt(c.st.next)}.</div>`);
+ due.forEach(c=>al+=`<div class="alert warn"><b>${esc(c.o.name)}</b>: task ${c.t.n} (${esc(c.t.name)}) reassessment due ${fmt(c.st.next)}, in ${c.st.days} days.</div>`);
+ const g={};gap.forEach(c=>(g[c.o.name]=g[c.o.name]||[]).push(c.t.n));
+ Object.entries(g).forEach(([n,ts])=>al+=`<div class="alert info"><b>${esc(n)}</b>: no competency approval for task${ts.length>1?'s':''} ${ts.map(x=>`<a href="#" data-task="${x}">${x}</a>`).join(', ')}. Direct supervision only, so ${esc(S.settings.apName)||'the Approved Person'} covers ${ts.length>1?'them':'it'}.</div>`);
+ const p={};plan.forEach(c=>(p[c.o.name+'|'+c.st.planned]=p[c.o.name+'|'+c.st.planned]||[]).push(c.t.n));
+ Object.entries(p).forEach(([k,ts])=>{const [n,d]=k.split('|');al+=`<div class="alert info"><b>${esc(n)}</b>: assessment for task${ts.length>1?'s':''} ${ts.join(', ')} booked for ${fmt(d)}.</div>`});
+ if(!S.settings.apName)al+=`<div class="alert warn"><b>Approved Person not set</b> for fire stopping. Add their name, number and the tasks they do in <a href="#setup">Set up</a>.</div>`;
+ withdrawn.forEach(d=>al+=`<div class="alert bad">Withdrawn document <b>${esc(d.ref)}</b> is on a training record after 1 April 2026.</div>`);
+ if(!al)al='<div class="alert good">Nothing overdue or missing.</div>';
+ const act=[...S.trainings.map(t=>({d:t.date,k:'Training',x:t.title,tasks:t.tasks})),...S.assessments.map(a=>({d:a.date,k:'Assessment',x:`${op(a.opId)?.name||''}: ${ASSESS_TYPES[a.type]?.label||''}`,tasks:a.tasks}))].sort((a,b)=>b.d.localeCompare(a.d)).slice(0,7);
+ return card('Competency matrix','Q-Mark fire stopping',INFO(),`<p class="lead">Every person against the 8 Approved Tasks, worked out from their assessments and training. Click any task heading or number for what it means and covers.</p>
+  <div class="tw"><table class="grid matrix"><thead><tr><th>Person</th>${TASKS.map(thTask).join('')}</tr></thead><tbody>
+  <tr><td><b>${esc(S.settings.apName)||'Approved Person'}</b><span class="cellsub">${S.settings.apName?'Approved Person '+esc(S.settings.apNumber):'not set yet'}</span></td>${TASKS.map(t=>`<td class="t">${S.settings.apTasks.includes(t.n)?'<span class="pill ap">AP does it</span>':'<span class="pill">Not done by AP</span>'}</td>`).join('')}</tr>
+  ${ops.map(o=>`<tr class="click" data-op="${o.id}"><td><b>${esc(o.name)}</b><span class="cellsub">${esc(o.initials)} ${o.started?' · started '+fmt(o.started):''}</span></td>${TASKS.map(t=>`<td class="t">${statusPill(taskStatus(o.id,t.n))}</td>`).join('')}</tr>`).join('')}
+  </tbody></table></div>
+  <div class="legend"><span><span class="pill ok">Approved</span> in date</span><span><span class="pill due">Due</span> within 60 days</span><span><span class="pill over">Overdue</span></span><span><span class="pill plan">Planned</span> booked</span><span><span class="pill tr">Trained, not assessed</span></span><span><span class="pill">Under supervision</span></span></div>`)+
+ `<div class="two">${card('Actions','Audit check','',al)}${card('Recent activity','','',act.length?`<div class="tw"><table class="grid plain"><tbody>${act.map(r=>`<tr><td class="mono" style="white-space:nowrap">${fmt(r.d)}</td><td><span class="pill ${r.k==='Training'?'tr':'ok'}">${r.k}</span></td><td>${esc(r.x)}</td><td>${chips(r.tasks)}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">Nothing recorded yet.</div>')}</div>`;
+};
+V.dashboard.after=()=>document.querySelectorAll('[data-op]').forEach(r=>r.onclick=()=>{selOp=r.dataset.op;location.hash='operatives'});
+
+let selOp=null;
+V.operatives=()=>{
+ if(!selOp||!op(selOp))selOp=S.operatives[0]?.id||null;
+ const o=selOp&&op(selOp);
+ const cards=S.operatives.map(x=>`<div class="opcard ${x.id===selOp?'sel':''}" data-sel="${x.id}"><span class="avatar">${esc(x.initials)}</span><div><div class="nm">${esc(x.name)}</div><div class="muted" style="font-size:12px">${esc(x.role||'')} ${x.started?' · started '+fmt(x.started):''}${x.ended?' · ended '+fmt(x.ended):''}</div></div></div>`).join('');
+ let out=card('Operatives',`${activeOps().length} of 20`,'<button class="btn primary small" data-act="addOp">＋ Add operative</button>',`<p class="lead">Everyone working under ${esc(S.settings.apName)||'the Approved Person'} on the scheme, office admin included.</p><div class="oplist">${cards}</div>`);
+ if(!o)return out;
+ const tr=S.trainings.filter(t=>t.attendees.some(a=>a.opId===o.id)).sort((a,b)=>b.date.localeCompare(a.date));
+ const as=S.assessments.filter(a=>a.opId===o.id).sort((a,b)=>b.date.localeCompare(a.date));
+ const lg=S.logs.filter(l=>l.opId===o.id);
+ out+=card(esc(o.name),esc(o.initials),`${INFO()}<button class="btn ghost small" data-act="editOp">Edit</button><button class="btn primary small" data-act="printOCL">Print competency log</button>`,`
+  <div class="muted" style="margin-bottom:12px">${esc(o.role||'')} · initials ${esc(o.initials)} ${o.started?' · started '+fmt(o.started):''}${o.ended?' · ended '+fmt(o.ended):''}</div>
+  <div class="tw"><table class="grid matrix"><thead><tr>${TASKS.map(thTask).join('')}</tr></thead><tbody><tr>${TASKS.map(t=>`<td class="t">${statusPill(taskStatus(o.id,t.n))}</td>`).join('')}</tr></tbody></table></div>
+  <div class="divider">Competency log · skills, knowledge, experience, behaviour</div>
+  ${CATS.map(c=>{const es=lg.filter(l=>l.cat===c).sort((a,b)=>a.date.localeCompare(b.date));return `<div style="margin-bottom:12px"><span class="logcat">${c}</span> <span class="muted" style="font-size:12px">${CAT_DESC[c]}</span>${es.length?`<ul class="loglist">${es.map(e=>`<li><span class="mono muted" style="white-space:nowrap">${fmt(e.date)}</span><span>${esc(e.text)}</span><button class="x" data-dellog="${e.id}">remove</button></li>`).join('')}</ul>`:'<div class="muted" style="font-size:12.5px">No entries yet.</div>'}</div>`}).join('')}
+  <button class="btn small" data-act="addLog">＋ Add log entry</button>
+  <div class="two" style="margin-top:18px">
+   <div><div class="divider">Training attended (${tr.length})</div>${tr.length?`<div class="tw"><table class="grid plain"><tbody>${tr.map(t=>`<tr class="click" data-otr="${t.id}"><td class="mono">${fmt(t.date)}</td><td>${esc(t.title)}</td><td>${chips(t.tasks)}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">None yet</div>'}</div>
+   <div><div class="divider">Competency assessments (${as.length})</div>${as.length?`<div class="tw"><table class="grid plain"><tbody>${as.map(a=>`<tr class="click" data-atca="${a.id}"><td class="mono">${fmt(a.date)}</td><td>${esc(ASSESS_TYPES[a.type]?.label||'')}</td><td>${chips(a.tasks)}</td><td>${a.approved==='Y'?'<span class="pill ok">Y</span>':'<span class="pill over">N</span>'}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">None yet</div>'}</div>
+  </div>`);
+ return out;
+};
+V.operatives.after=()=>{
+ document.querySelectorAll('[data-sel]').forEach(c=>c.onclick=()=>{selOp=c.dataset.sel;render()});
+ document.querySelectorAll('[data-otr]').forEach(r=>r.onclick=()=>printForms('OTR',[r.dataset.otr]));
+ document.querySelectorAll('[data-atca]').forEach(r=>r.onclick=()=>printForms('ATCA',[r.dataset.atca]));
+ document.querySelectorAll('[data-dellog]').forEach(b=>b.onclick=e=>{e.stopPropagation();S.logs=S.logs.filter(l=>l.id!==b.dataset.dellog);save();render()});
+ bindActs({addOp:()=>opForm(),editOp:()=>opForm(op(selOp)),addLog:()=>logForm(selOp),printOCL:()=>printForms('OCL',[selOp])});
+};
+
+let tFilter='';
+V.training=()=>{
+ const rows=S.trainings.slice().sort((a,b)=>b.date.localeCompare(a.date)).filter(t=>!tFilter||t.attendees.some(a=>a.opId===tFilter));
+ return card('Operative Training Records','OTR',`${INFO()}<select id="tf" style="width:auto;padding:7px 34px 7px 10px;font-size:13px;border-radius:8px"><option value="">Everyone</option>${S.operatives.map(o=>`<option value="${o.id}" ${tFilter===o.id?'selected':''}>${esc(o.name)}</option>`).join('')}</select><button class="btn primary small" data-act="newT">＋ New training record</button>`,
+ `<p class="lead">Every training session, toolbox talk and project induction. Pick what was covered and who attended, and the form fills itself in.</p>
+ ${rows.length?`<div class="tw"><table class="grid"><thead><tr><th>Date</th><th>What was covered</th><th>Tasks</th><th>Attended</th><th>Docs</th><th></th></tr></thead><tbody>
+ ${rows.map(t=>`<tr><td class="mono" style="white-space:nowrap">${fmt(t.date)}${t.date>today()?'<span class="cellsub">planned</span>':''}</td><td><b>${esc(t.title)}</b><div class="muted" style="font-size:12px;max-width:520px">${esc(t.details.slice(0,150))}${t.details.length>150?'…':''}</div></td><td>${chips(t.tasks)}</td><td>${t.attendees.map(a=>`<span class="pill ${a.understood?'ok':'due'}" title="${a.understood?'Attended and understood':'Understanding not confirmed'}">${esc(a.sig||a.name)}</span>`).join(' ')}</td><td class="muted">${t.docs.length}</td>
+ <td style="white-space:nowrap"><button class="btn small" data-pt="${t.id}">Print</button> <button class="btn small" data-et="${t.id}">Edit</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">No training records yet.</div>'}`);
+};
+V.training.after=()=>{
+ document.getElementById('tf').onchange=e=>{tFilter=e.target.value;render()};
+ document.querySelectorAll('[data-pt]').forEach(b=>b.onclick=()=>printForms('OTR',[b.dataset.pt]));
+ document.querySelectorAll('[data-et]').forEach(b=>b.onclick=()=>trainingForm(S.trainings.find(t=>t.id===b.dataset.et)));
+ bindActs({newT:()=>trainingForm()});
+};
+
+V.assessments=()=>{
+ const rows=S.assessments.slice().sort((a,b)=>b.date.localeCompare(a.date));
+ return card('Approved Task Competency Assessments','ATCA',`${INFO()}<button class="btn primary small" data-act="newA">＋ New assessment</button>`,
+ `<p class="lead">Practical, mock, written test or review. The next assessment date drives the reminders on the dashboard.</p>
+ ${rows.length?`<div class="tw"><table class="grid"><thead><tr><th>Date</th><th>Operative</th><th>Type</th><th>Tasks</th><th>RIA / door ref</th><th>Approved</th><th>Next</th><th></th></tr></thead><tbody>
+ ${rows.map(a=>{const o=op(a.opId);return `<tr><td class="mono" style="white-space:nowrap">${fmt(a.date)}${a.date>today()?'<span class="cellsub">planned</span>':''}</td><td><b>${esc(o?.name||'?')}</b></td><td>${esc(ASSESS_TYPES[a.type]?.label||'')}</td><td>${chips(a.tasks)}</td><td class="muted" style="font-size:12.5px">${esc(a.ria)}<br>${esc(a.door)}</td><td>${a.approved==='Y'?'<span class="pill ok">Y</span>':'<span class="pill over">N</span>'}</td><td class="mono">${fmt(a.next)}</td><td style="white-space:nowrap"><button class="btn small" data-pa="${a.id}">Print</button> <button class="btn small" data-ea="${a.id}">Edit</button></td></tr>`}).join('')}</tbody></table></div>`:'<div class="empty">No assessments yet.</div>'}`);
+};
+V.assessments.after=()=>{
+ document.querySelectorAll('[data-pa]').forEach(b=>b.onclick=()=>printForms('ATCA',[b.dataset.pa]));
+ document.querySelectorAll('[data-ea]').forEach(b=>b.onclick=()=>assessForm(S.assessments.find(a=>a.id===b.dataset.ea)));
+ bindActs({newA:()=>assessForm()});
+};
+
+V.register=()=>{
+ const s=S.settings;
+ return card('Operative Competency Register','OCR',`${INFO()}<button class="btn primary small" data-act="printOCR">Print register</button>`,
+ `<p class="lead">Built automatically from the competency assessments. Dates are when each task was first approved.</p>
+ <div class="tw"><table class="grid matrix"><thead><tr><th>Approved Person</th><th>Initials</th><th>Number</th>${TASKS.map(thTask).join('')}</tr></thead>
+ <tbody><tr><td><b>${esc(s.apName)}</b></td><td>${esc(s.apInitials)}</td><td>${esc(s.apNumber)}</td>${TASKS.map(t=>`<td class="t">${s.apTasks.includes(t.n)?`<span class="pill ap">${esc(s.apInitials)}</span>`:''}</td>`).join('')}</tr></tbody></table></div>
+ <div class="tw" style="margin-top:14px"><table class="grid matrix"><thead><tr><th>Operative</th><th>Initials</th><th>Started</th>${TASKS.map(thTask).join('')}<th>Ended</th></tr></thead><tbody>
+ ${S.operatives.map(o=>`<tr><td><b>${esc(o.name)}</b></td><td>${esc(o.initials)}</td><td class="mono">${fmt(o.started)}</td>${TASKS.map(t=>{const st=taskStatus(o.id,t.n);return `<td class="t mono">${st.first?fmt(st.first):st.state==='planned'?`<span class="pill plan">${fmt(st.planned)}</span>`:'<span class="muted" style="font-size:11px">under supervision</span>'}</td>`}).join('')}<td class="mono">${fmt(o.ended)}</td></tr>`).join('')}
+ </tbody></table></div>`);
+};
+V.register.after=()=>bindActs({printOCR:()=>printForms('OCR',['x'])});
+
+let dFilter='Active';
+V.documents=()=>{
+ const kinds=[...new Set(S.docs.map(d=>d.kind))];
+ const rows=S.docs.filter(d=>dFilter==='All'||d.status===dFilter);
+ return card('Document library',`${S.docs.filter(d=>d.status==='Active').length} active`,`<select id="df" style="width:auto;padding:7px 34px 7px 10px;font-size:13px;border-radius:8px">${['Active','Withdrawn','All'].map(x=>`<option ${dFilter===x?'selected':''}>${x}</option>`).join('')}</select><button class="btn primary small" data-act="newD">＋ Add document</button>`,
+ `<p class="lead">Controlled scheme documents, bulletins, training material and evidence. Training records pick their supporting documents from here, and each one can link to the file in Dropbox or on your site.</p>
+ ${kinds.map(k=>{const r=rows.filter(d=>d.kind===k);if(!r.length)return '';return `<div class="divider">${esc(k)} (${r.length})</div><div class="tw"><table class="grid plain"><tbody>${r.map(d=>{const used=S.trainings.filter(t=>t.docs.includes(d.id)).length;return `<tr><td class="mono" style="width:120px">${esc(d.ref)}</td><td>${d.link?`<a href="${esc(d.link)}" target="_blank" rel="noopener">${esc(d.title)}</a>`:esc(d.title)}</td><td class="mono muted" style="width:70px">${esc(d.issue)}</td><td class="mono" style="width:95px">${fmt(d.date)}</td><td style="width:100px">${d.status==='Active'?'<span class="pill ok">Active</span>':'<span class="pill over">Withdrawn</span>'}</td><td class="muted" style="width:110px;font-size:12px">${used?`used in ${used} record${used>1?'s':''}`:''}</td><td style="width:60px"><button class="btn small" data-ed="${d.id}">Edit</button></td></tr>`}).join('')}</tbody></table></div>`}).join('')}`);
+};
+V.documents.after=()=>{
+ document.getElementById('df').onchange=e=>{dFilter=e.target.value;render()};
+ document.querySelectorAll('[data-ed]').forEach(b=>b.onclick=()=>docForm(doc(b.dataset.ed)));
+ bindActs({newD:()=>docForm()});
+};
+
+V.setup=()=>{
+ const s=S.settings;
+ return `<div class="two">${card('Company and Approved Person','','',`<p class="lead">Fills the header of every form.</p>
+ <div class="f">
+  <div class="full"><label class="l">Certified company</label><input type="text" id="sCompany" value="${esc(s.company)}"></div>
+  <div><label class="l">Company certification number</label><input type="text" id="sCert" value="${esc(s.certNo)}" placeholder="from your Q-Mark certificate"></div>
+  <div><label class="l">Approved Person number</label><input type="text" id="sNum" value="${esc(s.apNumber)}"></div>
+  <div><label class="l">Approved Person name</label><input type="text" id="sName" value="${esc(s.apName)}"></div>
+  <div><label class="l">Initials</label><input type="text" id="sInit" value="${esc(s.apInitials)}"></div>
+  <div class="full"><label class="l">Approved Tasks you carry out yourself ${INFO()}</label>${taskPick('sTasks',s.apTasks)}</div>
+ </div><div style="margin-top:14px"><button class="btn primary" data-act="saveS">Save</button></div>`)}
+ ${card('"What was covered" templates',`${S.topics.length}`,'<button class="btn primary small" data-act="newTop">＋ Add template</button>',`<p class="lead">The drop down on a new training record. Picking one fills in the tasks, description and supporting documents.</p>
+ <div class="tw"><table class="grid plain"><tbody>${S.topics.map(t=>`<tr><td><b>${esc(t.title)}</b><div class="muted" style="font-size:12px">${t.docs.length} document${t.docs.length===1?'':'s'}</div></td><td>${chips(t.tasks)}</td><td><button class="btn small" data-etop="${t.id}">Edit</button></td></tr>`).join('')}</tbody></table></div>`)}</div>
+ ${card('Back up and move your data','','',`<p class="lead">For now, records are kept in this browser${memOnly?' (storage is blocked here, so changes last until you close the page)':''}. Export a backup file to keep in Dropbox, or to load into the live version.</p>
+ <div class="card-actions"><button class="btn" data-act="exportJ">Export backup (.json)</button><button class="btn" data-act="copyJ">Copy backup</button><label class="btn">Import backup<input type="file" id="imp" accept=".json,application/json" hidden></label><span class="spacer"></span><button class="btn danger" data-act="reset">Reset to demo data</button></div>`)}`;
+};
+V.setup.after=()=>{
+ taskPickBind(document.getElementById('sTasks'));
+ document.querySelectorAll('[data-etop]').forEach(b=>b.onclick=()=>topicForm(S.topics.find(t=>t.id===b.dataset.etop)));
+ document.getElementById('imp').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const j=JSON.parse(await f.text());if(!j.settings||!j.operatives)throw 0;S=j;save();toast('Backup imported');render()}catch(_){toast('That file is not a valid backup')}};
+ bindActs({
+  saveS:()=>{const s=S.settings;s.company=val('sCompany');s.certNo=val('sCert');s.apNumber=val('sNum');s.apName=val('sName');s.apInitials=val('sInit');s.apTasks=picked('sTasks');save();toast('Saved');render()},
+  newTop:()=>topicForm(),
+  exportJ:()=>saveFile(`PML training records backup ${fmt(today())}.json`,JSON.stringify(S,null,1)),
+  copyJ:async()=>{try{await navigator.clipboard.writeText(JSON.stringify(S));toast('Backup copied')}catch(e){toast('Clipboard blocked here')}},
+  reset:()=>confirmBox('Reset everything back to the demo data? Anything you added will be lost.',()=>{S=seed();save();render();toast('Demo data restored')})
+ });
+};
+
+/* ===================== router ===================== */
+function render(){
+ const v=(location.hash||'#dashboard').slice(1);const view=V[v]?v:'dashboard';
+ document.querySelectorAll('#tabs a').forEach(a=>a.classList.toggle('on',a.dataset.v===view));
+ const s=S.settings;
+ const fut=S.trainings.filter(t=>t.date>today()).length+S.assessments.filter(a=>a.date>today()).length;
+ document.getElementById('hero').innerHTML=`<div><div class="eyebrow">Q-Mark Fire Stopping Installation Scheme</div><h1>Training &amp; Competency Records</h1>
+  <p>Training records, competency assessments, the register, competency logs and controlled documents in one place. Every record prints in the scheme template layout.</p>
+  <div class="ap">Approved Person <b>${esc(s.apName)||'not set'}</b>${s.apNumber?` (${esc(s.apNumber)})`:''} · ${esc(s.company)} · today <b>${fmt(today())}</b>${fut?` · <b>${fut}</b> planned`:''}</div></div>
+  <div class="hchips"><div class="hchip"><b>${activeOps().length}</b>operatives</div><div class="hchip"><b>${S.trainings.length}</b>training</div><div class="hchip"><b>${S.assessments.length}</b>assessments</div><div class="hchip"><b>${S.docs.filter(d=>d.status==='Active').length}</b>documents</div></div>`;
+ document.getElementById('nT').textContent=S.trainings.length;document.getElementById('nA').textContent=S.assessments.length;
+ document.getElementById('main').innerHTML=V[view]();
+ V[view].after&&V[view].after();
+}
+window.addEventListener('hashchange',render);
+document.getElementById('modalBg').addEventListener('click',e=>{if(e.target.id==='modalBg')e.currentTarget.classList.remove('show')});
+load();render();
+</script>
+<script type="module">
+// Same login as the RIA: anyone not signed in goes back to the sign in page.
+import { auth } from "./firebase-init.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+onAuthStateChanged(auth, user => { if (!user) location.replace('index.html'); });
+document.getElementById('signOutBtn').addEventListener('click', () => signOut(auth));
+</script>
+</body>
+</html>
