@@ -69,6 +69,7 @@
 .tm-head{font-family:var(--ffh);font-size:10.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
 .train-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:760px){.train-grid{grid-template-columns:1fr}}
+.train-tile.fs{border-left-color:#E8590C}.train-tile.fd{border-left-color:#2563EB}
 .train-tile{display:flex;align-items:center;justify-content:space-between;gap:12px;text-decoration:none;color:var(--ink);background:#fff;border:1px solid var(--border);border-left:4px solid var(--yellow);border-radius:10px;padding:10px 14px;transition:border-color .15s,box-shadow .15s}
 .train-tile:hover{border-left-color:var(--black);box-shadow:var(--shadow)}
 .train-tile b{font-family:var(--ffh);font-size:13px;font-weight:700}
@@ -152,8 +153,8 @@
   <div class="train-mini" id="training">
     <div class="tm-head">Training &amp; Records</div>
     <div class="train-grid">
-      <a class="train-tile" href="training-fs.html"><div><b>Fire Stopping Training &amp; Records</b><div class="tt-stats" id="statsFs"></div></div><span class="tt-go">Open →</span></a>
-      <a class="train-tile" href="training.html"><div><b>Fire Door Installation Training &amp; Records</b><div class="tt-stats" id="statsFd"></div></div><span class="tt-go">Open →</span></a>
+      <a class="train-tile fs" href="training.html#fs"><div><b>Fire Stopping Training &amp; Records</b><div class="tt-stats" id="statsFs"></div></div><span class="tt-go">Open →</span></a>
+      <a class="train-tile fd" href="training.html#fd"><div><b>Fire Door Installation Training &amp; Records</b><div class="tt-stats" id="statsFd"></div></div><span class="tt-go">Open →</span></a>
     </div>
   </div>
 </div>
@@ -172,18 +173,17 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// Quick counts on the two training tiles (read from the training pages' saved records on this device)
+// Quick counts on the two training tiles (from the training records saved on this device)
 (function(){
-  const show=(key,id)=>{
-    let d=null;try{d=JSON.parse(localStorage.getItem(key)||'null')}catch(e){}
+  let d=null;try{d=JSON.parse(localStorage.getItem('pml-training-v3')||'null')}catch(e){}
+  const today=new Date().toISOString().slice(0,10);
+  [['fs','statsFs'],['fd','statsFd']].forEach(([s,id])=>{
     const el=document.getElementById(id);if(!el)return;
-    if(!d){el.innerHTML='<span>Not opened on this device yet</span>';return;}
-    const today=new Date().toISOString().slice(0,10);
-    const ops=(d.operatives||[]).filter(o=>!o.ended).length;
-    const due=(d.assessments||[]).filter(a=>a.approved==='Y'&&a.next&&a.next<today).length;
-    el.innerHTML=`<span>${ops} operative${ops===1?'':'s'}</span><span>${(d.trainings||[]).length} training records</span><span>${(d.assessments||[]).length} assessments</span>`+(due?`<span class="warn">${due} reassessment${due>1?'s':''} overdue</span>`:'');
-  };
-  show('pml-fs-training-v1','statsFs');show('pml-fdi-training-v2','statsFd');
+    if(!d){el.innerHTML='<span>Open to load your records</span>';return;}
+    const ppl=(d.people||[]).filter(p=>p.schemes&&p.schemes[s]&&!p.schemes[s].ended).length;
+    const tr=(d.trainings||[]).filter(t=>t.s===s).length, as=(d.assessments||[]).filter(a=>a.s===s).length;
+    el.innerHTML=`<span>${ppl} people</span><span>${tr} training</span><span>${as} assessments</span>`;
+  });
 })();
 </script>
 <script type="module">
