@@ -340,6 +340,27 @@ details.more[open] summary{margin-bottom:8px}
  .rec .acts{flex-wrap:wrap}
  .seg a{flex:none}
 }
+/* attachments */
+.drop{border:2px dashed var(--border);border-radius:12px;padding:16px;text-align:center;background:var(--tint);transition:background .15s,border-color .15s}
+.drop.over{border-color:var(--yellow-deep);background:var(--yellow-soft)}
+.drop b{font-family:var(--ffh);font-size:13px;display:block;margin-bottom:6px}
+.files{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.file{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:10px;background:#fff;padding:4px 6px 4px 4px;font-size:12.5px;max-width:100%}
+.file .open{display:inline-flex;align-items:center;gap:7px;background:none;border:0;cursor:pointer;font:inherit;color:var(--ink);padding:3px 4px;border-radius:7px;min-width:0}
+.file .open:hover{background:var(--yellow-soft)}
+.file .ic{width:26px;height:26px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-family:var(--ffh);font-size:9px;font-weight:800;color:#fff;flex:none}
+.file .ic.pdf{background:#C0392B}.file .ic.doc{background:#2B579A}.file .ic.xls{background:#1D6F42}.file .ic.img{background:#7c3aed}.file .ic.oth{background:#6f675e}
+.file .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:260px}
+.file .sz{color:var(--muted);font-size:11px;font-family:var(--ffm)}
+.file .rm{background:none;border:0;color:var(--red);cursor:pointer;font-size:14px;padding:2px 5px;border-radius:6px}
+.file .rm:hover{background:var(--red-bg)}
+.clip{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;color:var(--muted);font-weight:600}
+@media (max-width:600px){
+ .att{grid-template-columns:24px 1fr 96px;row-gap:6px}
+ .att .adate{grid-column:2}
+ .att label{grid-column:3}
+ .file .nm{max-width:190px}
+}
 
 </style>
 </head>
@@ -506,6 +527,35 @@ const chips=(s,a)=>`<span class="tchips">${(a||[]).slice().sort((x,y)=>x-y).map(
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2400)}
 let F='all';try{F=localStorage.getItem('pml-training-filter')||'all'}catch(e){}
 
+/* ================= attachments (saved in this browser's IndexedDB) ================= */
+const FILES={_db:null,
+ open(){return this._db||(this._db=new Promise((res,rej)=>{const r=indexedDB.open('pml-training-files',1);r.onupgradeneeded=()=>r.result.createObjectStore('files',{keyPath:'id'});r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}))},
+ async run(mode,fn){const db=await this.open();return new Promise((res,rej)=>{const tx=db.transaction('files',mode);const rq=fn(tx.objectStore('files'));tx.oncomplete=()=>res(rq?rq.result:undefined);tx.onerror=()=>rej(tx.error);tx.onabort=()=>rej(tx.error)})},
+ put(rec){return this.run('readwrite',st=>st.put(rec))},
+ get(id){return this.run('readonly',st=>st.get(id))},
+ del(id){return this.run('readwrite',st=>st.delete(id)).catch(()=>{})},
+ all(){return this.run('readonly',st=>st.getAll())}
+};
+const MAXFILE=40*1024*1024;
+const fsize=n=>n>1048576?(n/1048576).toFixed(1)+' MB':Math.max(1,Math.round(n/1024))+' KB';
+function fkind(f){const n=(f.name||'').toLowerCase(),t=f.type||'';
+ if(t.includes('pdf')||n.endsWith('.pdf'))return ['pdf','PDF'];
+ if(/\.(docx?|rtf|odt)$/.test(n)||t.includes('word'))return ['doc','DOC'];
+ if(/\.(xlsx?|csv|ods)$/.test(n)||t.includes('sheet')||t.includes('excel'))return ['xls','XLS'];
+ if(t.startsWith('image/')||/\.(jpe?g|png|heic|webp|gif)$/.test(n))return ['img','IMG'];
+ return ['oth',(n.split('.').pop()||'FILE').slice(0,4).toUpperCase()]}
+function filesHtml(list,edit){return (list||[]).map(f=>{const [c,l]=fkind(f);return `<span class="file"><button type="button" class="open" data-open="${f.id}" title="Open ${esc(f.name)}"><span class="ic ${c}">${l}</span><span class="nm">${esc(f.name)}</span><span class="sz">${fsize(f.size||0)}</span></button>${edit?`<button type="button" class="rm" data-rmfile="${f.id}" title="Remove">✕</button>`:''}</span>`}).join('')}
+async function openFile(id){
+ let rec=null;try{rec=await FILES.get(id)}catch(e){}
+ if(!rec||!rec.blob){toast('That file is not saved on this device');return}
+ const url=URL.createObjectURL(rec.blob);
+ const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener';
+ if(!/pdf|image/.test(rec.type||''))a.download=rec.name;
+ document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+}
+const blobToData=b=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=()=>rej(r.error);r.readAsDataURL(b)});
+const dataToBlob=async d=>(await fetch(d)).blob();
+
 /* ================= competency status ================= */
 function status(pid,s,n){
  const T=today(),sc=S.schemes[s];
@@ -630,7 +680,7 @@ function personPage(p){
    <div class="taskrow">${SCH[s].tasks.map(t=>`<button class="tbox" data-s="${s}" data-n="${t.n}"><span class="tn">${t.n} <em>${esc(t.name)}</em></span>${pill(status(p.id,s,t.n))}</button>`).join('')}</div>
    <div class="quick"><button class="btn primary small" data-q="t:${s}">＋ Training</button><button class="btn primary small" data-q="a:${s}">＋ Assessment</button><button class="btn primary small" data-q="l:${s}">＋ Log note</button><span class="spacer"></span><button class="btn small" data-q="pack:${s}">Print ${SCH[s].name.toLowerCase()} training pack</button></div>
    <div class="cols3">
-    <div><div class="divider">Training (${tr.length})</div><div class="mini-list">${tr.map(t=>`<div class="mini" data-otr="${t.id}"><div class="d">${fmt(t.date)}</div>${esc(t.title)}<div style="margin-top:4px">${chips(s,t.tasks)}</div></div>`).join('')||'<div class="empty">None yet</div>'}</div></div>
+    <div><div class="divider">Training (${tr.length})</div><div class="mini-list">${tr.map(t=>`<div class="mini" data-otr="${t.id}"><div class="d">${fmt(t.date)}${(t.files||[]).length?` · <span class="clip">📎 ${t.files.length}</span>`:''}</div>${esc(t.title)}<div style="margin-top:4px">${chips(s,t.tasks)}</div></div>`).join('')||'<div class="empty">None yet</div>'}</div></div>
     <div><div class="divider">Assessments (${as.length})</div><div class="mini-list">${as.map(a=>`<div class="mini" data-atca="${a.id}"><div class="d">${fmt(a.date)}${a.date>today()?' · booked':''} · next ${fmt(a.next)}</div>${esc(TYPES[a.type]||'')}${a.ria?` · ${esc(a.ria)}`:''}<div style="margin-top:4px">${chips(s,a.tasks)} ${a.approved==='Y'?'<span class="pill ok">Y</span>':'<span class="pill over">N</span>'}</div></div>`).join('')||'<div class="empty">None yet</div>'}</div></div>
     <div><div class="divider">Competency log (${lg.length})</div><div class="mini-list">${lg.map(l=>`<div class="mini" data-log="${l.id}"><div class="d">${fmt(l.date)} · <span class="cat">${l.cat}</span></div>${esc(l.text.length>170?l.text.slice(0,170)+'…':l.text)}</div>`).join('')||'<div class="empty">None yet</div>'}</div></div>
    </div></div></div>`}).join('')}
@@ -639,7 +689,7 @@ function personPage(p){
 
 function recRow(kind,r){
  const s=r.s;
- if(kind==='t')return `<div class="rec ${s}"><span class="dt">${fmt(r.date)}${r.date>today()?'<span class="cellsub">booked</span>':''}</span><div><div class="ttl">${esc(r.title)} ${schTag(s)}</div><div class="sub">${esc(r.details.slice(0,170))}${r.details.length>170?'…':''}</div><div class="meta">${chips(s,r.tasks)} ${r.att.map(a=>{const p=person(a.pid);return `<span class="who ${a.ok?'':'no'}"><b>${esc(p?.ini||'?')}</b>${esc(p?.name||'')}</span>`}).join(' ')}</div></div><div class="acts"><button class="btn small" data-pt="${r.id}">Print</button><button class="btn small" data-et="${r.id}">Edit</button></div></div>`;
+ if(kind==='t')return `<div class="rec ${s}"><span class="dt">${fmt(r.date)}${r.date>today()?'<span class="cellsub">booked</span>':''}</span><div><div class="ttl">${esc(r.title)} ${schTag(s)}</div><div class="sub">${esc(r.details.slice(0,170))}${r.details.length>170?'…':''}</div><div class="meta">${chips(s,r.tasks)} ${r.att.map(a=>{const p=person(a.pid);return `<span class="who ${a.ok?'':'no'}"><b>${esc(p?.ini||'?')}</b>${esc(p?.name||'')}</span>`}).join(' ')}</div>${(r.files||[]).length?`<div class="files">${filesHtml(r.files)}</div>`:''}</div><div class="acts"><button class="btn small" data-pt="${r.id}">Print</button><button class="btn small" data-et="${r.id}">Edit</button></div></div>`;
  const p=person(r.pid);
  return `<div class="rec ${s}"><span class="dt">${fmt(r.date)}${r.date>today()?'<span class="cellsub">booked</span>':''}</span><div><div class="ttl">${esc(p?.name||'?')} · ${esc(TYPES[r.type]||'')} ${schTag(s)}</div><div class="sub">${esc([r.ria,r.ref].filter(Boolean).join(' · '))}</div><div class="meta">${chips(s,r.tasks)} ${r.approved==='Y'?'<span class="pill ok">Approved</span>':'<span class="pill over">Not approved</span>'} <span class="muted" style="font-size:12px">next ${fmt(r.next)}</span></div></div><div class="acts"><button class="btn small" data-pa="${r.id}">Print</button><button class="btn small" data-ea="${r.id}">Edit</button></div></div>`;
 }
@@ -736,16 +786,18 @@ V.forms.after=()=>{
 /* ================= shared UI bits ================= */
 const card=(title,tag,actions,body,cls='')=>`<div class="card ${cls}"><div class="card-header"><h2>${title}${tag?` <span class="tag">${tag}</span>`:''}</h2><div class="card-actions">${actions||''}</div></div><div class="card-body">${body}</div></div>`;
 function bindActs(map){document.querySelectorAll('[data-act]').forEach(b=>{if(map[b.dataset.act])b.onclick=map[b.dataset.act]})}
+let onCancel=null;
 function modal(title,body,onSave,saveLabel='Save',extra='',wide=false){
+ onCancel=null;
  const m=$('modal');m.className='modal'+(wide?' wide':'');
  m.innerHTML=`<header><h3>${title}</h3><span class="spacer"></span><button class="xbtn" id="mX">✕</button></header><div class="body">${body}</div><footer>${extra}<span class="spacer"></span><button class="btn" id="mC">Cancel</button>${onSave?`<button class="btn primary" id="mS">${saveLabel}</button>`:''}</footer>`;
  $('modalBg').classList.add('show');
  const close=()=>$('modalBg').classList.remove('show');
- $('mX').onclick=close;$('mC').onclick=close;
- if(onSave)$('mS').onclick=()=>{if(onSave()!==false){close();save();render()}};
+ $('mX').onclick=closeModal;$('mC').onclick=closeModal;
+ if(onSave)$('mS').onclick=()=>{if(onSave()!==false){onCancel=null;close();save();render()}};
  return m;
 }
-const closeModal=()=>$('modalBg').classList.remove('show');
+function closeModal(){$('modalBg').classList.remove('show');const c=onCancel;onCancel=null;c&&c()}
 const val=id=>($(id)?.value||'').trim();
 const picked=id=>[...document.querySelectorAll(`#${id} input:checked`)].map(i=>+i.value);
 function schPick(cur){return `<div class="schpick" id="schpick">${['fs','fd'].map(s=>`<button type="button" class="${s} ${cur===s?'on':''}" data-s="${s}"><i style="background:${SCH[s].col}"></i>${SCH[s].name}</button>`).join('')}</div>`}
@@ -757,7 +809,7 @@ const preScheme=pre=>pre?.s||(F!=='all'?F:'fs');
 
 /* ---------- add chooser ---------- */
 function chooser(){
- const C=[['training','📋','Training session','A toolbox talk, CPD, course or practical session, and who attended'],['assess','✅','Competency assessment','Signing someone off for tasks after a live job, mock install or test'],['log','📝','Competency log note','A note on someone\'s skills, knowledge, experience or behaviour'],['cert','🎓','Course or certificate','First aid, SMSTS, CSCS, BM TRADA course with expiry date'],['cir','🧯','Fire stopping register entry','A finished fire stopping RIA report for CIR 05B'],['person','👤','Person','Someone new joining either scheme']];
+ const C=[['training','📋','Training session','A toolbox talk, CPD, course or practical session, who attended, and any PDF / Word evidence'],['assess','✅','Competency assessment','Signing someone off for tasks after a live job, mock install or test'],['log','📝','Competency log note','A note on someone\'s skills, knowledge, experience or behaviour'],['cert','🎓','Course or certificate','First aid, SMSTS, CSCS, BM TRADA course with expiry date'],['cir','🧯','Fire stopping register entry','A finished fire stopping RIA report for CIR 05B'],['person','👤','Person','Someone new joining either scheme']];
  const m=modal('What do you want to add?',`<div class="choose">${C.map(([k,ic,t,d])=>`<button class="choice" data-c="${k}"><span class="ic">${ic}</span><b>${t}</b><span>${d}</span></button>`).join('')}</div>`,null);
  m.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{closeModal();({training:()=>trainingForm(),assess:()=>assessForm(),log:()=>logForm(),cert:()=>certForm(),cir:()=>cirForm(),person:()=>personForm()})[b.dataset.c]()});
 }
@@ -766,7 +818,8 @@ function chooser(){
 function trainingForm(t,pre){
  const isNew=!t;
  let s=t?t.s:preScheme(pre);
- t=t?clone(t):{id:uid(),s,date:defDate(),title:'',tasks:[],docs:[],details:'',trainer:'',trSig:'',att:(pre?.att||[]).map(pid=>({pid,sig:person(pid)?.ini||'',date:defDate(),ok:true}))};
+ t=t?clone(t):{id:uid(),s,date:defDate(),title:'',tasks:[],docs:[],files:[],details:'',trainer:'',trSig:'',att:(pre?.att||[]).map(pid=>({pid,sig:person(pid)?.ini||'',date:defDate(),ok:true}))};
+ t.files=t.files||[];const added=[],removed=[];
  const draw=()=>{
   const ap=apOf(s);const people=peopleIn(s);
   if(!t.trainer&&ap){t.trainer=ap.name;t.trSig=ap.ini}
@@ -779,19 +832,40 @@ function trainingForm(t,pre){
   <div class="full"><label class="l">Details of what was covered</label><textarea id="tDet">${esc(t.details)}</textarea></div>
   <div><label class="l">Training conducted by</label><select id="tTr">${[...new Set([...(ap?[ap.name]:[]),...S.people.map(p=>p.name),t.trainer,'External provider'].filter(Boolean))].map(n=>`<option ${t.trainer===n?'selected':''}>${esc(n)}</option>`).join('')}</select></div>
   <div><label class="l">Trainer signature (initials)</label><input type="text" id="tSig" value="${esc(t.trSig)}"></div>
-  <div class="full"><details class="more" ${t.docs.length?'open':''}><summary>Supporting documents (${t.docs.length})</summary>${docChecklist(s,t.docs)}</details></div>
+  <div class="full"><label class="l">Evidence &amp; attachments (${(t.files||[]).length})</label>
+   <div class="drop" id="drop"><input type="file" id="fileIn" multiple hidden accept=".pdf,.doc,.docx,.rtf,.odt,.xls,.xlsx,.csv,.txt,.jpg,.jpeg,.png,.heic,.webp,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/*"><b>Drop PDF or Word files here</b><button type="button" class="btn small" id="pick">Choose files</button><div class="hint">Sign in sheets, certificates, test results, install reports, photos. Kept with this training record on this device.</div></div>
+   <div class="files" id="fileList">${filesHtml(t.files,true)}</div></div>
+  <div class="full"><details class="more" ${t.docs.length?'open':''}><summary>Supporting documents from the list (${t.docs.length})</summary>${docChecklist(s,t.docs)}</details></div>
  </div>`};
  const keep=()=>{t.date=val('tDate')||t.date;t.title=val('tTitle');t.tasks=picked('tTasks');t.details=$('tDet').value.trim();t.trainer=val('tTr');t.trSig=val('tSig');t.docs=[...document.querySelectorAll('#docs input:checked')].map(i=>i.value);
   t.att=[...document.querySelectorAll('.att[data-pid]')].filter(r=>r.querySelector('.aon').checked).map(r=>{const ok=r.querySelector('.aok').checked;return {pid:r.dataset.pid,sig:ok?r.querySelector('.asig').value.trim():'',date:r.querySelector('.adate').value,ok}})};
  const m=modal(isNew?'Record training':'Edit training record','',()=>{keep();t.s=s;if(!t.title){toast('Add a title');return false}if(!t.att.length){toast('Tick who attended');return false}
+   removed.forEach(id=>FILES.del(id));
    if(isNew)S.trainings.push(t);else Object.assign(S.trainings.find(x=>x.id===t.id),t);toast('Training saved')},'Save',isNew?'':`<button class="btn danger" id="del">Delete</button> <button class="btn" id="prt">Print</button>`,true);
+ onCancel=()=>{added.forEach(id=>FILES.del(id))};
  const body=m.querySelector('.body');
+ const listFiles=()=>{$('fileList').innerHTML=filesHtml(t.files,true);document.querySelector('#drop').closest('.full').querySelector('label.l').textContent=`Evidence & attachments (${t.files.length})`;
+  document.querySelectorAll('[data-rmfile]').forEach(b=>b.onclick=()=>{const id=b.dataset.rmfile;t.files=t.files.filter(f=>f.id!==id);if(added.includes(id))FILES.del(id);else removed.push(id);listFiles()})};
+ const addFiles=async fl=>{const list=[...fl];let n=0;
+  for(const f of list){
+   if(f.size>MAXFILE){toast(`${f.name} is over 40 MB, so it was skipped`);continue}
+   const id='f'+uid();
+   try{await FILES.put({id,name:f.name,type:f.type,size:f.size,added:today(),blob:f});}catch(e){toast('Could not save '+f.name+' on this device');continue}
+   added.push(id);t.files.push({id,name:f.name,type:f.type,size:f.size,added:today()});n++;
+  }
+  listFiles();if(n)toast(`${n} file${n>1?'s':''} attached`);
+ };
  const paint=()=>{body.innerHTML=draw();bindTaskPick(s,'tTasks');bindSchPick(ns=>{keep();if(ns!==s){s=ns;t.tasks=[];t.docs=[];t.trainer='';t.att=t.att.filter(a=>inScheme(person(a.pid),s))}paint()});
   $('tTpl').onchange=e=>{const x=S.templates.find(y=>y.id===e.target.value);if(!x)return;keep();t.title=x.title;t.tasks=x.tasks.slice();t.details=x.details;t.docs=x.docs.slice();paint();toast('Filled in from template')};
   $('tDate').onchange=e=>document.querySelectorAll('.adate').forEach(d=>d.value=e.target.value);
-  $('tTr').onchange=e=>{const p=S.people.find(x=>x.name===e.target.value);$('tSig').value=p?p.ini:''};};
+  $('tTr').onchange=e=>{const p=S.people.find(x=>x.name===e.target.value);$('tSig').value=p?p.ini:''};
+  const dz=$('drop'),fi=$('fileIn');$('pick').onclick=()=>fi.click();fi.onchange=()=>{if(fi.files.length)addFiles(fi.files);fi.value=''};
+  ['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.add('over')}));
+  ['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.remove('over')}));
+  dz.addEventListener('drop',e=>{if(e.dataTransfer.files.length)addFiles(e.dataTransfer.files)});
+  listFiles();};
  paint();
- if(!isNew){$('del').onclick=()=>{S.trainings=S.trainings.filter(x=>x.id!==t.id);save();closeModal();render();toast('Deleted')};$('prt').onclick=()=>{closeModal();printForms('OTR',t.id)}}
+ if(!isNew){$('del').onclick=()=>{const old=S.trainings.find(x=>x.id===t.id);(old?.files||[]).concat(t.files).forEach(f=>FILES.del(f.id));S.trainings=S.trainings.filter(x=>x.id!==t.id);save();closeModal();render();toast('Deleted')};$('prt').onclick=()=>{closeModal();printForms('OTR',t.id)}}
 }
 function docChecklist(s,sel){
  const ds=S.docs.filter(d=>(d.s===s||d.s==='both')&&d.status==='Active');
@@ -896,14 +970,18 @@ function settings(){
    <div><label class="l">Approved Person number</label><input type="text" id="apn_${s}" value="${esc(S.schemes[s].apNumber)}"></div>
    <div class="full"><label class="l">Tasks the Approved Person does themselves</label>${taskPick(s,'apt_'+s,S.schemes[s].apTasks)}</div></div></div>`).join('')}
   <div class="full"><label class="l">"What was covered" templates</label><div class="checklist">${S.templates.map(x=>`<div class="it">${schTag(x.s)}<span style="flex:1">${esc(x.title)}</span><button type="button" class="btn small" data-tpl="${x.id}">Edit</button></div>`).join('')}</div><button type="button" class="btn small" id="newTpl" style="margin-top:8px">＋ Add template</button></div>
-  <div class="full"><label class="l">Backup</label><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn small" id="exp">Export backup (.json)</button><label class="btn small">Import backup<input type="file" id="imp" accept=".json" hidden></label><button type="button" class="btn small danger" id="rst">Reset to the records from your documents</button></div><div class="hint">Records are kept in this browser${memOnly?' (storage blocked here, so changes last until you close the page)':''}. Export a backup to keep a copy in Dropbox or move it to another device.</div></div>
+  <div class="full"><label class="l">Backup</label><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn small" id="exp">Export backup (.json)</button><label class="btn small">Import backup<input type="file" id="imp" accept=".json" hidden></label><button type="button" class="btn small danger" id="rst">Reset to the records from your documents</button></div><div class="hint">Records are kept in this browser${memOnly?' (storage blocked here, so changes last until you close the page)':''}. Export a backup (it includes the attached files) to keep a copy in Dropbox or move it to another device.</div></div>
  </div>`,()=>{
   S.company=val('sCo');S.certNo=val('sCe');['fs','fd'].forEach(s=>{S.schemes[s].apId=val('ap_'+s);S.schemes[s].apNumber=val('apn_'+s);S.schemes[s].apTasks=picked('apt_'+s)});toast('Settings saved')},'Save','',true);
  ['fs','fd'].forEach(s=>bindTaskPick(s,'apt_'+s));
  m.querySelectorAll('[data-tpl]').forEach(b=>b.onclick=()=>tplForm(S.templates.find(x=>x.id===b.dataset.tpl)));
  $('newTpl').onclick=()=>tplForm();
- $('exp').onclick=()=>saveFile(`PML training records backup ${fmt(today())}.json`,JSON.stringify(S,null,1));
- $('imp').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const j=JSON.parse(await f.text());if(!j.people||!j.schemes)throw 0;S=j;save();closeModal();render();toast('Backup imported')}catch(_){toast('That file is not a valid backup')}};
+ $('exp').onclick=async()=>{const ids=new Set(S.trainings.flatMap(t=>(t.files||[]).map(f=>f.id)));let files=[];try{files=(await FILES.all()).filter(f=>ids.has(f.id))}catch(e){}
+  const _files=[];for(const f of files)_files.push({id:f.id,name:f.name,type:f.type,size:f.size,added:f.added,data:await blobToData(f.blob)});
+  saveFile(`PML training records backup ${fmt(today())}.json`,JSON.stringify({...S,_files}))};
+ $('imp').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const j=JSON.parse(await f.text());if(!j.people||!j.schemes)throw 0;
+  for(const x of (j._files||[])){try{await FILES.put({id:x.id,name:x.name,type:x.type,size:x.size,added:x.added,blob:await dataToBlob(x.data)})}catch(_){}}
+  delete j._files;S=j;save();closeModal();render();toast('Backup imported')}catch(_){toast('That file is not a valid backup')}};
  $('rst').onclick=()=>{if(!$('rst').dataset.sure){$('rst').dataset.sure=1;$('rst').textContent='Tap again to confirm reset';return}S=clone(SEED);save();closeModal();render();toast('Reset done')};
 }
 function tplForm(x){
@@ -933,6 +1011,7 @@ function openTasks(s,n){
  draw();$('taskBg').classList.add('show');
 }
 document.addEventListener('click',e=>{
+ const o=e.target.closest('[data-open]');if(o){e.preventDefault();e.stopPropagation();openFile(o.dataset.open);return}
  const c=e.target.closest('[data-task]');if(c){e.preventDefault();e.stopPropagation();const [s,n]=c.dataset.task.split(':');openTasks(s,+n);return}
  const i=e.target.closest('[data-tinfo]');if(i){e.preventDefault();e.stopPropagation();openTasks(i.dataset.tinfo,1)}
 },true);
@@ -943,14 +1022,14 @@ const ffoot=(code,i,n)=>`<div class="ffoot"><span>${code}</span><span>${esc(S.co
 const legend=s=>`<div class="legend10">${SCH[s].tasks.map(t=>`<span>${t.n}. ${esc(t.name)}</span>`).join('')}</div>`;
 const dname=d=>`${d.title}${d.issue?' '+d.issue:''} (${d.ref})`;
 function fOTR(t,i=1,n=1){
- const s=t.s,docs=(t.docs||[]).map(docById).filter(Boolean);const att=t.att||[];
+ const s=t.s,docs=[...(t.docs||[]).map(docById).filter(Boolean).map(dname),...(t.files||[]).map(f=>f.name+' (attached)')];const att=t.att||[];
  const pad=Math.max(5,Math.ceil(att.length/2));const L=att.slice(0,pad),R=att.slice(pad);
  const ar=a=>{if(!a)return '<td>&nbsp;</td><td></td><td></td>';const p=person(a.pid);return `<td>${esc(p?.name||'')}</td><td class="sig">${esc(a.ok?a.sig:'')}</td><td>${fmt(a.date)}</td>`};
  const dr=Math.max(3,Math.ceil(docs.length/2));
  return `<div class="sheet">${fhead(s,s==='fs'?'Operative Training Record – Fire Stopping Works':'Operative Training Record')}
  <table class="ft"><tr><td colspan="3" class="lb" style="width:auto">Details of what was covered in this training:</td><td class="lb" style="width:20%">Approved Task Number(s) (if applicable):</td><td style="width:12%">${(t.tasks||[]).slice().sort((a,b)=>a-b).join(', ')}</td></tr>
  <tr><td colspan="5" style="height:${s==='fs'?'34':'40'}mm">${t.title?`<b>${esc(t.title)}</b><br>`:''}${esc(t.details||'').replace(/\n/g,'<br>')}</td></tr>
- ${Array.from({length:dr}).map((_,k)=>`<tr>${k===0?`<td class="lb" rowspan="${dr}">Reference of Supporting Documents Used:</td>`:''}<td colspan="2">${docs[k*2]?esc(dname(docs[k*2])):'&nbsp;'}</td><td colspan="2">${docs[k*2+1]?esc(dname(docs[k*2+1])):''}</td></tr>`).join('')}
+ ${Array.from({length:dr}).map((_,k)=>`<tr>${k===0?`<td class="lb" rowspan="${dr}">Reference of Supporting Documents Used:</td>`:''}<td colspan="2">${docs[k*2]?esc(docs[k*2]):'&nbsp;'}</td><td colspan="2">${docs[k*2+1]?esc(docs[k*2+1]):''}</td></tr>`).join('')}
  <tr><td class="lb">Training Conducted by:</td><td colspan="2"><b>Name:</b> ${esc(t.trainer||'')}</td><td colspan="2"><b>Signature:</b> <span class="sig">${esc(t.trSig||'')}</span></td></tr></table>
  <div style="font-weight:700;margin:8px 0 2px">Attended and understood by:</div>
  <table class="ft" style="margin-top:0"><tr><th>Name</th><th>Signature</th><th>Date</th><th style="background:#fff;border-top:0;border-bottom:0;width:8px"></th><th>Name</th><th>Signature</th><th>Date</th></tr>${Array.from({length:pad}).map((_,k)=>`<tr>${ar(L[k])}<td style="border-top:0;border-bottom:0"></td>${ar(R[k])}</tr>`).join('')}</table>
